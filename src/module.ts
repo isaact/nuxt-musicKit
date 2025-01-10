@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver, installModule } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -16,10 +16,8 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {},
-  async setup(_options, nuxt) {
+  async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-
-    await installModule('@nuxt/scripts');
 
     nuxt.options.app.head.script ||= []
     // Extend Nuxt config to load the MusicKit.js library
@@ -28,6 +26,12 @@ export default defineNuxtModule<ModuleOptions>({
       defer: true,
       'data-web-components': true,
     });
+
+    nuxt.options.app.head.meta ||= []
+    nuxt.options.app.head.meta.push(
+      { name: 'apple-music-app-name', content: options.appName },
+      { name: 'apple-music-app-build', content: options.appBuild },
+    )
 
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin(resolver.resolve('./runtime/plugin'))
