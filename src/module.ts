@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver, addServerHandler } from '@nuxt/kit'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -32,8 +32,12 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'apple-music-app-name', content: options.appName },
       { name: 'apple-music-app-build', content: options.appBuild },
     )
-    // nuxt.options.runtimeConfig.musicKit =defu(nuxt.options.runtimeConfig.musicKit, options)
     nuxt.options.runtimeConfig.musicKit ||= options
+
+    addServerHandler({
+      route: '/api/token',
+      handler: resolver.resolve('./runtime/server/api/token'),
+    })
 
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin(resolver.resolve('./runtime/plugin'))
