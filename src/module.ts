@@ -32,6 +32,8 @@ export default defineNuxtModule<ModuleOptions>({
       { name: 'apple-music-app-name', content: options.appName },
       { name: 'apple-music-app-build', content: options.appBuild },
     )
+    // nuxt.options.runtimeConfig.musicKit =defu(nuxt.options.runtimeConfig.musicKit, options)
+    nuxt.options.runtimeConfig.musicKit ||= options
 
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin(resolver.resolve('./runtime/plugin'))
