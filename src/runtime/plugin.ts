@@ -3,16 +3,15 @@ import type { ModuleOptions } from '../module'
 import { generateDeveloperToken } from './server/utils/musicKit'
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
-  // console.log('Plugin injected by my-module!')
   const config = useRuntimeConfig()
-  const musicKit = config.musicKit
+  const musicKitOptions = config.musicKit
 
-  if (!musicKit) {
+  if (!musicKitOptions) {
     console.warn('musicKit configuration is not available')
     return
   }
 
-  const { developerKey, teamID, keyID } = musicKit as ModuleOptions
+  const { developerKey, teamID, keyID } = musicKitOptions as ModuleOptions
   const token = await generateDeveloperToken(developerKey, teamID, keyID)
 
   useHead({
@@ -20,4 +19,5 @@ export default defineNuxtPlugin(async (_nuxtApp) => {
       { name: 'apple-music-developer-token', content: token },
     ]
   })
+
 })

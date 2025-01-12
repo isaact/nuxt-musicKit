@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, createResolver, addServerHandler } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, createResolver, addServerHandler, addImports } from '@nuxt/kit'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -37,6 +37,12 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({
       route: '/api/token',
       handler: resolver.resolve('./runtime/server/api/token'),
+    })
+
+    addImports({
+      name: 'useMusicKit', // name of the composable to be used
+      as: 'useMusicKit',
+      from: resolver.resolve('./runtime/composables/useMusicKit') // path of composable
     })
 
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
