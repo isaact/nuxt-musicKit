@@ -1,4 +1,6 @@
-import { defineNuxtModule, addPlugin, createResolver, addServerHandler, addImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addServerHandler, addImports } from '@nuxt/kit'
+import { defu } from 'defu'
+import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -8,6 +10,11 @@ export interface ModuleOptions {
   appName: string
   appBuild: string
 }
+interface PublicMusicKitConfig {
+  MUSICKIT_TOKEN?: string
+  MUSICKIT_APP_NAME?: string
+  MUSICKIT_APP_BUILD?: string
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -15,7 +22,13 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'musicKit',
   },
   // Default configuration options of the Nuxt module
-  defaults: {},
+  defaults: {
+    developerKey: '',
+    teamID: '',
+    keyID: '',
+    appName: '',
+    appBuild: '',
+  },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
@@ -39,6 +52,17 @@ export default defineNuxtModule<ModuleOptions>({
       handler: resolver.resolve('./runtime/server/api/token'),
     })
 
+    const token = await generateDeveloperToken(options.developerKey, options.teamID, options.keyID)
+
+    // nuxt.options.runtimeConfig.public.musicKit ||= {}
+    nuxt.options.runtimeConfig.public.musicKit = defu(nuxt.options.runtimeConfig.public.musicKit as PublicMusicKitConfig, {
+      MUSICKIT_TOKEN: token,
+      MUSICKIT_APP_NAME: options.appName,
+      MUSICKIT_APP_BUILD: options.appBuild
+    })
+
+
+
     addImports({
       name: 'useMusicKit', // name of the composable to be used
       as: 'useMusicKit',
@@ -46,6 +70,6 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-    addPlugin(resolver.resolve('./runtime/plugin'))
+    // addPlugin(resolver.resolve('./runtime/plugin'))
   },
 })

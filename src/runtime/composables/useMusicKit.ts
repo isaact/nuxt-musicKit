@@ -1,4 +1,5 @@
 import { ref, onMounted } from '#imports'
+import { generateDeveloperToken, isTokenExpired } from '../server/utils/musicKit'
 
 declare global {
   interface Window {
@@ -11,6 +12,9 @@ declare global {
 }
 
 export function useMusicKit() {
+  const devToken = ref(null)
+  const userToken = ref(null)
+  const authorized = ref(false)
   const musicKitLoaded = ref(false)
 
   const checkMusicKit = () => {
@@ -30,6 +34,9 @@ export function useMusicKit() {
   })
 
   return {
+    devToken,
+    userToken,
+    authorized,
     musicKitLoaded
   }
 }
