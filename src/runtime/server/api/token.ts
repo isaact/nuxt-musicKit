@@ -7,7 +7,7 @@ export default defineEventHandler(async (_) => {
 
   try {
     // Ensure the keys exist in the config
-    const { developerKey, teamID, keyID } = config.musicKitLoader
+    const { developerKey, teamID, keyID } = config.musicKit
     if (!developerKey || !teamID || !keyID) {
       throw new Error('Missing required musicKitLoader keys in runtime config.')
     }

@@ -10,11 +10,14 @@ export interface ModuleOptions {
   appName: string
   appBuild: string
 }
-interface PublicMusicKitConfig {
-  MUSICKIT_TOKEN?: string
-  MUSICKIT_APP_NAME?: string
-  MUSICKIT_APP_BUILD?: string
+declare global {
+  interface PublicMusicKitConfig {
+    MUSICKIT_TOKEN: string
+    MUSICKIT_APP_NAME: string
+    MUSICKIT_APP_BUILD: string
+  }
 }
+
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -40,11 +43,6 @@ export default defineNuxtModule<ModuleOptions>({
       'data-web-components': true,
     });
 
-    nuxt.options.app.head.meta ||= []
-    nuxt.options.app.head.meta.push(
-      { name: 'apple-music-app-name', content: options.appName },
-      { name: 'apple-music-app-build', content: options.appBuild },
-    )
     nuxt.options.runtimeConfig.musicKit ||= options
 
     addServerHandler({
@@ -60,8 +58,6 @@ export default defineNuxtModule<ModuleOptions>({
       MUSICKIT_APP_NAME: options.appName,
       MUSICKIT_APP_BUILD: options.appBuild
     })
-
-
 
     addImports({
       name: 'useMusicKit', // name of the composable to be used
