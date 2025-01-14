@@ -19,12 +19,40 @@
         </div>
       </div>
       
-      <h2>Jazz Radio Stations</h2>
-      <ul>
-        <li v-for="station in stations" :key="station.id" @click="playStation(station)">
-          {{ station.name }}
-        </li>
-      </ul>
+      <div class="search-container">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search albums..."
+          class="search-input"
+        >
+        <button :disabled="!searchQuery.length" @click="searchAlbums">
+          search
+        </button>
+      </div>
+
+      <div v-if="searchResults.length > 0" class="results-container">
+        <h2>Search Results</h2>
+        <ul class="album-list">
+          <li
+            v-for="album in searchResults"
+            :key="album.id"
+            class="album-item"
+          >
+            <div class="album-info">
+              <img
+                :src="album.attributes.artwork.url.replace('{w}x{h}', '100x100')"
+                :alt="album.attributes.name"
+                class="album-art"
+              >
+              <div class="album-details">
+                <h3>{{ album.attributes.name }}</h3>
+                <p>{{ album.attributes.artistName }}</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
     
     <div v-if="error">
@@ -37,48 +65,10 @@
 import { useMusicKit } from '#imports'
 const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit()
 const _mk = getInstance()
-const stations = ref([])
 const loading = ref(true)
 const error = ref(null)
-
-const fetchStations = async () => {
-  try {
-    const musicKit = await getInstance()
-    console.log('MusicKit instance:', musicKit)
-    
-    // Get storefront ID from MusicKit instance
-    const storefrontId = musicKit.storefrontId
-    if (!storefrontId) {
-      throw new Error('No storefront ID available')
-    }
-    
-    console.log('Using storefront ID:', storefrontId)
-    
-    const response = await musicKit.api.music(`/v1/test`, {
-     'filter[featured]': 'apple-music-live-radio',
-    })
-    
-    console.log('API Response:', response)
-    
-    // stations.value = response.data.map(station => ({
-    //   id: station.id,
-    //   name: station.attributes.name,
-    //   url: station.attributes.playParams.id
-    // })).slice(0, 5) // Get first 5 stations
-  } catch (err) {
-    console.error('Fetch Stations Error:', err)
-    error.value = `Error: ${err.message} - ${err.response?.data?.errors?.[0]?.detail || 'No additional details'}`
-  }
-}
-
-const playStation = async (station) => {
-  try {
-    const musicKit = await getInstance()
-    await musicKit.playStream(station.url)
-  } catch (err) {
-    error.value = err.message
-  }
-}
+const searchQuery = ref('')
+const searchResults = ref([])
 
 const renewToken = async () => {
   try {
@@ -88,10 +78,36 @@ const renewToken = async () => {
   }
 }
 
+const searchAlbums = async () => {
+  try {
+    if (!searchQuery.value) {
+      searchResults.value = []
+      return
+    }
+    
+    const musicKit = await getInstance()
+    const storefrontId = musicKit.storefrontId
+    if (!storefrontId) {
+      throw new Error('No storefront ID available')
+    }
+    
+    const response = await musicKit.api.music(`/v1/catalog/${storefrontId}/search`, {
+      term: searchQuery.value,
+      types: ['albums'],
+      limit: 10
+    })
+    
+    searchResults.value = response.data.results.albums?.data || []
+  } catch (err) {
+    console.error('Search Albums Error:', err)
+    error.value = `Error: ${err.message} - ${err.response?.data?.errors?.[0]?.detail || 'No additional details'}`
+    searchResults.value = []
+  }
+}
+
 watch(musicKitLoaded, async (loaded) => {
   if (loaded) {
     try {
-      await fetchStations()
       loading.value = false
     } catch (err) {
       error.value = err.message
@@ -102,7 +118,19 @@ watch(musicKitLoaded, async (loaded) => {
 </script>
 
 <style>
-.connected {
-  color: green;
+.album-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  gap: 0.5rem;
+}
+.album-item {
+  width: 200px;
+  padding: 1rem;
+  list-style: none;
+  text-align: center;
+}
+.album-item img {
+  width: 100%;
 }
 </style>
