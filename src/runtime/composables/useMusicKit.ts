@@ -15,11 +15,15 @@ declare global {
         }
       }) => Promise<void>
       getInstance: () => unknown
+      api: {
+        music: (path: string) => Promise<Response>
+      }
     }
   }
 }
 
 const devToken = ref('')
+const musicKitConnected = ref(false)
 // const userToken = ref(null)
 const authorized = ref(false)
 const musicKitLoaded = ref(false)
@@ -41,32 +45,45 @@ const fetchToken = async () => {
   }
 }
 
+const testConnection = async ():Promise<boolean> =>  {
+  if(window.MusicKit){
+    const instance = window.MusicKit.getInstance()
+    const {response} = await instance.api.music('/v1/test')
+    // console.log([request, response, response.ok, response.status])
+    if(response.ok){
+      musicKitConnected.value = true
+      return true
+    }
+  }
+  return false
+}
+
 export function useMusicKit() {
   const config = useRuntimeConfig()
   const musicKitOptions = config.public.musicKit as PublicMusicKitConfig
   devToken.value = musicKitOptions.MUSICKIT_TOKEN
-  // if(isTokenExpired(musicKitOptions.MUSICKIT_TOKEN)){
-  //   await fetchToken();
-  // }
-  console.log(musicKitOptions)
 
   const tokenExpired = computed(() => {
     return isTokenExpired(devToken.value)
   })
 
+
   const getInstance = async () => {
-    if(window.MusicKit){
+    if(window.MusicKit && musicKitLoaded.value){
       if(isTokenExpired(devToken.value)) {
         await fetchToken();
       }
-      await window.MusicKit.configure({
+      const mkConfig = {
         developerToken: devToken.value,
         app: {
           name: musicKitOptions.MUSICKIT_APP_NAME,
           build: musicKitOptions.MUSICKIT_APP_BUILD,
         },
-      })
-      return window.MusicKit.getInstance()
+      }
+      await window.MusicKit.configure(mkConfig)
+      await testConnection()
+      const instance = window.MusicKit.getInstance()
+      return instance
     }
   }
 
@@ -85,6 +102,7 @@ export function useMusicKit() {
     devToken,
     authorized,
     musicKitLoaded,
+    musicKitConnected,
     getInstance,
     tokenExpired
   }
