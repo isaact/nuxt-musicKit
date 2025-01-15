@@ -79,11 +79,6 @@ MUSIC_KIT_KEY_ID="YOUR_KEY_ID"
 MUSIC_KIT_APP_NAME="Your App Name"
 MUSIC_KIT_APP_BUILD="1.0"
 ```
-
-For more detailed instructions, refer to Apple's official documentation:
-- [MusicKit Authentication Guide](https://developer.apple.com/documentation/musickit/musickitjs/authenticating_users_with_musickit_js)
-- [Creating MusicKit Keys](https://developer.apple.com/documentation/musickit/creating_musickit_keys)
-
 ## Contribution
 
 <details>
@@ -102,15 +97,9 @@ For more detailed instructions, refer to Apple's official documentation:
   # Build the playground
   npm run dev:build
   
-  # Run ESLint
-  npm run lint
-  
   # Run Vitest
   npm run test
   npm run test:watch
-  
-  # Release new version
-  npm run release
   ```
 </details>
 
