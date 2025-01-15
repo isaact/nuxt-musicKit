@@ -25,7 +25,7 @@ declare global {
 const devToken = ref('')
 const musicKitConnected = ref(false)
 // const userToken = ref(null)
-const authorized = ref(false)
+// const authorized = ref(false)
 const musicKitLoaded = ref(false)
 // const error = ref(null)
 
@@ -113,7 +113,7 @@ export function useMusicKit() {
 
   return {
     devToken,
-    authorized,
+    // authorized,
     musicKitLoaded,
     musicKitConnected,
     getInstance,
