@@ -14,9 +14,9 @@ declare global {
           build: string
         }
       }) => Promise<void>
-      getInstance: () => any
+      getInstance: () => MusicKitInstance
       api: {
-        music: (path: string) => Promise<Response>
+        music: (path: string) => Promise<MusicKitApiResponse>
       }
     }
   }
@@ -44,6 +44,18 @@ const fetchToken = async () => {
     throw err
   }
 }
+const testConnection = async (musicKit: MusicKitInstance) =>  {
+  if(musicKit){
+    console.log(musicKit)
+    const { response } = await musicKit.api.music('/v1/test')
+    console.log([response, response.ok, response.status])
+    if(response.ok){
+      musicKitConnected.value = true
+      return true
+    }
+  }
+  return false
+}
 
 export function useMusicKit() {
   const config = useRuntimeConfig()
@@ -53,26 +65,9 @@ export function useMusicKit() {
   const tokenExpired = computed(() => {
     return isTokenExpired(devToken.value)
   })
-
-  const testConnection = async ():Promise<boolean> =>  {
-    if(window.MusicKit){
-      const instance = window.MusicKit.getInstance()
-      console.log(instance)
-      const response = await instance.api.music('/v1/test')
-      console.log([response, response.ok, response.status])
-      if(response.ok){
-        musicKitConnected.value = true
-        return true
-      }
-    }
-    return false
-  }
-
-  const getInstance = async () => {
-    if(window.MusicKit && musicKitLoaded.value){
-      if(isTokenExpired(devToken.value)) {
-        await fetchToken();
-      }
+  const initialize = async () => {
+    if(window.MusicKit && !musicKitConnected.value){
+      musicKitLoaded.value = true
       const mkConfig = {
         developerToken: devToken.value,
         app: {
@@ -81,21 +76,37 @@ export function useMusicKit() {
         },
       }
       await window.MusicKit.configure(mkConfig)
-      await testConnection()
-      const instance = window.MusicKit.getInstance()
-      return instance
+      const musicKit = window.MusicKit?.getInstance()
+      if(musicKit){
+        await testConnection(musicKit)
+      }
     }
   }
+  const getInstance = async (): Promise<MusicKitInstance | undefined> => {
+    if (window.MusicKit && musicKitLoaded.value) {
+      if (isTokenExpired(devToken.value)) {
+        await fetchToken();
+        await initialize();
+      }
+  
+      const instance = window.MusicKit.getInstance();
+      return instance;
+    }
+  
+    // If conditions aren't met, return undefined
+    return undefined;
+  };
 
   onMounted(async () => {
     if (window.MusicKit) {
-      musicKitLoaded.value = true
-      await testConnection()
+      // musicKitLoaded.value = true
+      // console.log('booo', window.MusicKit.initialized)
+      await initialize()
     }else{
       // Listen for musickitloaded event
       window.addEventListener('musickitloaded', async () => {
-        musicKitLoaded.value = true
-        await testConnection()
+        // musicKitLoaded.value = true
+        await initialize();
       })
     }
   })

@@ -1,5 +1,10 @@
 {
   "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "./types/musickit" // Add this path to make types globally available
+    ]
+  },
   "exclude": [
     "dist",
     "node_modules",

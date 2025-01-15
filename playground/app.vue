@@ -64,7 +64,7 @@
 <script setup>
 import { useMusicKit } from '#imports'
 const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit()
-const _mk = getInstance()
+// const _mk = getInstance()
 const loading = ref(true)
 const error = ref(null)
 const searchQuery = ref('')
