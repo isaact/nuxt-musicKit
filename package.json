@@ -2,7 +2,10 @@
   "name": "nuxt-musickit",
   "version": "0.5.5",
   "description": "Nuxt MusicKit Modue",
-  "repository": "https://github.com/isaact/nuxt-musicKit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaact/nuxt-musicKit.git"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
