@@ -1,17 +1,16 @@
 import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
-// import { useMusicKit } from '../src/runtime/composables/useMusicKit'
 
 describe('MusicKit Module', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     env: {
-      MUSIC_KIT_DEVELOPER_KEY: process.env.MUSIC_KIT_DEVELOPER_KEY,
-      MUSIC_KIT_TEAM_ID: process.env.MUSIC_KIT_TEAM_ID,
-      MUSIC_KIT_KEY_ID: process.env.MUSIC_KIT_KEY_ID,
-      MUSIC_KIT_APP_NAME: process.env.MUSIC_KIT_APP_NAME,
-      MUSIC_KIT_APP_BUILD: process.env.MUSIC_KIT_APP_BUILD
+      MUSIC_KIT_DEVELOPER_KEY: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgHf0OGUU1tMUbIEk7\nJwrK9JZWohHtOiX6XjaGpYWELmGgCgYIKoZIzj0DAQehRANCAATDdHEJpymreX2W\nZU3cLTinB2t4X9o0ZfJr2Aohrs82zbboW6qBnAqiomHbXozPAxvwi1YwXzALzH28\nYcGkJxnh\n-----END PRIVATE KEY-----",
+      MUSIC_KIT_TEAM_ID: "your team id",
+      MUSIC_KIT_KEY_ID: "key id",
+      MUSIC_KIT_APP_NAME: "app name",
+      MUSIC_KIT_APP_BUILD: "app build"
     },
     setupTimeout: 60000,
     server: true,
@@ -39,38 +38,4 @@ describe('MusicKit Module', async () => {
       })
     })
   })
-
-  // describe('useMusicKit composable', () => {
-  //   it('provides reactive state', () => {
-  //     const {
-  //       devToken,
-  //       // authorized,
-  //       musicKitLoaded,
-  //       musicKitConnected,
-  //       tokenExpired
-  //     } = useMusicKit()
-      
-  //     expect(devToken.value).toBeDefined()
-  //     // expect(authorized.value).toBeDefined()
-  //     expect(musicKitLoaded.value).toBeDefined()
-  //     expect(musicKitConnected.value).toBeDefined()
-  //     expect(tokenExpired.value).toBeDefined()
-  //   })
-
-  //   it('provides getInstance method', async () => {
-  //     const { getInstance } = useMusicKit()
-  //     const instance = await getInstance()
-  //     expect(instance).toBeDefined()
-  //   })
-
-  //   it('manages token expiration', async () => {
-  //     const { tokenExpired } = useMusicKit()
-  //     expect(typeof tokenExpired.value).toBe('boolean')
-  //   })
-
-  //   it('provides musicKit connection status', async () => {
-  //     const { musicKitConnected } = useMusicKit()
-  //     expect(typeof musicKitConnected.value).toBe('boolean')
-  //   })
-  // })
 })
