@@ -26,11 +26,11 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {
-    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY || '',
-    teamID: process.env.MUSIC_KIT_TEAM_ID || '',
-    keyID: process.env.MUSIC_KIT_KEY_ID || '',
-    appName: process.env.MUSIC_KIT_APP_NAME || '',
-    appBuild: process.env.MUSIC_KIT_APP_BUILD || '',
+    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
+    teamID: process.env.MUSIC_KIT_TEAM_ID,
+    keyID: process.env.MUSIC_KIT_KEY_ID,
+    appName: process.env.MUSIC_KIT_APP_NAME,
+    appBuild: process.env.MUSIC_KIT_APP_BUILD,
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -44,14 +44,15 @@ export default defineNuxtModule<ModuleOptions>({
       'data-web-components': true,
     });
 
-    nuxt.options.runtimeConfig.musicKit ||= options
+    nuxt.options.runtimeConfig.musicKit = defu(nuxt.options.runtimeConfig.musicKit || {}, options)
+    const musicKitOptions = nuxt.options.runtimeConfig.musicKit
 
     addServerHandler({
       route: '/api/token',
       handler: resolver.resolve('./runtime/server/api/token'),
     })
-    if(options.developerKey && options.teamID && options.keyID){
-      token = await generateDeveloperToken(options.developerKey, options.teamID, options.keyID)
+    if(musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID){
+      token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID)
     }
     
 
