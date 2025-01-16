@@ -34,6 +34,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
+    let token = ''
 
     nuxt.options.app.head.script ||= []
     // Extend Nuxt config to load the MusicKit.js library
@@ -49,8 +50,10 @@ export default defineNuxtModule<ModuleOptions>({
       route: '/api/token',
       handler: resolver.resolve('./runtime/server/api/token'),
     })
-
-    const token = await generateDeveloperToken(options.developerKey, options.teamID, options.keyID)
+    if(options.developerKey && options.teamID && options.keyID){
+      token = await generateDeveloperToken(options.developerKey, options.teamID, options.keyID)
+    }
+    
 
     // nuxt.options.runtimeConfig.public.musicKit ||= {}
     nuxt.options.runtimeConfig.public.musicKit = defu(nuxt.options.runtimeConfig.public.musicKit as PublicMusicKitConfig, {
