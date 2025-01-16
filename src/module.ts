@@ -26,11 +26,11 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {
-    developerKey: '',
-    teamID: '',
-    keyID: '',
-    appName: '',
-    appBuild: '',
+    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY || '',
+    teamID: process.env.MUSIC_KIT_TEAM_ID || '',
+    keyID: process.env.MUSIC_KIT_KEY_ID || '',
+    appName: process.env.MUSIC_KIT_APP_NAME || '',
+    appBuild: process.env.MUSIC_KIT_APP_BUILD || '',
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
