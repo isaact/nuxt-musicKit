@@ -52,7 +52,15 @@ export default defineNuxtModule<ModuleOptions>({
       handler: resolver.resolve('./runtime/server/api/token'),
     })
     if(musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID){
-      token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID)
+      try {
+        token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID)
+      } catch (error) {
+        console.warn('Failed to generate Apple Music developer token:', error)
+        console.warn('MusicKit functionality will be limited without a valid token')
+      }
+    } else {
+      console.warn('Missing required Apple Music authentication credentials')
+      console.warn('MusicKit functionality will be limited without a valid token')
     }
     
 
