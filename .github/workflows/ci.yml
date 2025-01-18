@@ -28,6 +28,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      MUSIC_KIT_DEVELOPER_KEY: ${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}
+      MUSIC_KIT_TEAM_ID: ${{ secrets.MUSIC_KIT_TEAM_ID }}
+      MUSIC_KIT_KEY_ID: ${{ secrets.MUSIC_KIT_KEY_ID }}
+      MUSIC_KIT_APP_NAME: ${{ secrets.MUSIC_KIT_APP_NAME }}
+      MUSIC_KIT_APP_BUILD: ${{ secrets.MUSIC_KIT_APP_BUILD}}
+
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -39,20 +46,8 @@ jobs:
         run: npx npm@latest i
 
       - name: Playground prepare
-        env:
-          MUSIC_KIT_DEVELOPER_KEY: ${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}
-          MUSIC_KIT_TEAM_ID: ${{ secrets.MUSIC_KIT_TEAM_ID }}
-          MUSIC_KIT_KEY_ID: ${{ secrets.MUSIC_KIT_KEY_ID }}
-          MUSIC_KIT_APP_NAME: ${{ secrets.MUSIC_KIT_APP_NAME }}
-          MUSIC_KIT_APP_BUILD: ${{ secrets.MUSIC_KIT_APP_BUILD}}
         run: npm run dev:prepare
 
       - name: Test
-        env:
-          MUSIC_KIT_DEVELOPER_KEY: ${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}
-          MUSIC_KIT_TEAM_ID: ${{ secrets.MUSIC_KIT_TEAM_ID }}
-          MUSIC_KIT_KEY_ID: ${{ secrets.MUSIC_KIT_KEY_ID }}
-          MUSIC_KIT_APP_NAME: ${{ secrets.MUSIC_KIT_APP_NAME }}
-          MUSIC_KIT_APP_BUILD: ${{ secrets.MUSIC_KIT_APP_BUILD}}
         run: npm run test
 
