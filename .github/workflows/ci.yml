@@ -28,13 +28,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-      MUSIC_KIT_DEVELOPER_KEY: ${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}
-      MUSIC_KIT_TEAM_ID: ${{ secrets.MUSIC_KIT_TEAM_ID }}
-      MUSIC_KIT_KEY_ID: ${{ secrets.MUSIC_KIT_KEY_ID }}
-      MUSIC_KIT_APP_NAME: ${{ secrets.MUSIC_KIT_APP_NAME }}
-      MUSIC_KIT_APP_BUILD: ${{ secrets.MUSIC_KIT_APP_BUILD}}
-
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
@@ -45,13 +38,14 @@ jobs:
       - name: Install dependencies
         run: npx npm@latest i
 
-      - name: Debug environment variables
+      - name: Create .env file
         run: |
-          echo "MUSIC_KIT_DEVELOPER_KEY: $MUSIC_KIT_DEVELOPER_KEY"
-          echo "MUSIC_KIT_TEAM_ID: $MUSIC_KIT_TEAM_ID"
-          echo "MUSIC_KIT_KEY_ID: $MUSIC_KIT_KEY_ID"
-          echo "MUSIC_KIT_APP_NAME: $MUSIC_KIT_APP_NAME"
-          echo "MUSIC_KIT_APP_BUILD: $MUSIC_KIT_APP_BUILD"
+          echo "MUSIC_KIT_DEVELOPER_KEY=${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}" > .env
+          echo "MUSIC_KIT_TEAM_ID=${{ secrets.MUSIC_KIT_TEAM_ID }}" >> .env
+          echo "MUSIC_KIT_KEY_ID=${{ secrets.MUSIC_KIT_KEY_ID }}" >> .env
+          echo "MUSIC_KIT_APP_NAME=${{ secrets.MUSIC_KIT_APP_NAME }}" >> .env
+          echo "MUSIC_KIT_APP_BUILD=${{ secrets.MUSIC_KIT_APP_BUILD }}" >> .env
+          cat .env
 
       - name: Playground prepare
         run: npm run dev:prepare
