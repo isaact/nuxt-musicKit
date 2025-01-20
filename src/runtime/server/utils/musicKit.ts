@@ -9,7 +9,21 @@ export async function generateDeveloperToken(privateKey: string, teamId: string,
         })
     }
 
+    // Validate private key format
+    if (!privateKey.startsWith('-----BEGIN PRIVATE KEY-----') || 
+        !privateKey.includes('-----END PRIVATE KEY-----')) {
+        throw createError({
+            statusCode: 500,
+            message: 'Invalid private key format. Ensure it includes proper PEM headers/footers'
+        })
+    }
+
     try {
+        // Debug output
+        console.log('Private key length:', privateKey.length)
+        console.log('Team ID:', teamId)
+        console.log('Key ID:', keyId)
+
         const ecPrivateKey = await importPKCS8(privateKey, 'ES256')
         const now = Math.floor(Date.now() / 1000)
         
@@ -23,8 +37,14 @@ export async function generateDeveloperToken(privateKey: string, teamId: string,
 
         return token
     } catch (error) {
-        console.error(`Failed to generate developer token (keylen: ${privateKey.length}, ${teamId.length}, ${keyId.length}):`, error)
-        throw error
+        console.error('Failed to generate developer token:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        const errorStack = error instanceof Error ? error.stack : undefined
+        throw createError({
+            statusCode: 500,
+            message: `Failed to generate developer token: ${errorMessage}`,
+            stack: errorStack
+        })
     }
 }
 
