@@ -23,7 +23,7 @@ export async function generateDeveloperToken(privateKey: string, teamId: string,
 
         return token
     } catch (error) {
-        console.error('Failed to generate developer token:', error)
+        console.error(`Failed to generate developer token (keylen: ${privateKey.length}):`, error)
         throw error
     }
 }
