@@ -38,27 +38,39 @@ jobs:
       - name: Install dependencies
         run: npx npm@latest i
 
-      - name: Create .env files
-        run: |
-          # Create .env in root directory
-          echo "MUSIC_KIT_DEVELOPER_KEY=${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}" > .env
-          echo "MUSIC_KIT_TEAM_ID=${{ secrets.MUSIC_KIT_TEAM_ID }}" >> .env
-          echo "MUSIC_KIT_KEY_ID=${{ secrets.MUSIC_KIT_KEY_ID }}" >> .env
-          echo "MUSIC_KIT_APP_NAME=${{ secrets.MUSIC_KIT_APP_NAME }}" >> .env
-          echo "MUSIC_KIT_APP_BUILD=${{ secrets.MUSIC_KIT_APP_BUILD }}" >> .env
+      # - name: Create .env files
+      #   run: |
+      #     # Create .env in root directory
+      #     echo "MUSIC_KIT_DEVELOPER_KEY=${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}" > .env
+      #     echo "MUSIC_KIT_TEAM_ID=${{ secrets.MUSIC_KIT_TEAM_ID }}" >> .env
+      #     echo "MUSIC_KIT_KEY_ID=${{ secrets.MUSIC_KIT_KEY_ID }}" >> .env
+      #     echo "MUSIC_KIT_APP_NAME=${{ secrets.MUSIC_KIT_APP_NAME }}" >> .env
+      #     echo "MUSIC_KIT_APP_BUILD=${{ secrets.MUSIC_KIT_APP_BUILD }}" >> .env
           
-          # Create .env in test fixtures directory
-          mkdir -p test/fixtures/basic
-          cp .env test/fixtures/basic/.env
+      #     # Create .env in test fixtures directory
+      #     mkdir -p test/fixtures/basic
+      #     cp .env test/fixtures/basic/.env
           
-          # Debug output
-          echo "Root .env:"
-          cat .env
-          echo "Test fixture .env:"
-          cat test/fixtures/basic/.env
+      #     # Debug output
+      #     echo "Root .env:"
+      #     cat .env
+      #     echo "Test fixture .env:"
+      #     cat test/fixtures/basic/.env
 
       - name: Playground prepare
         run: npm run dev:prepare
+        env:
+          MUSIC_KIT_DEVELOPER_KEY: ${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}
+          MUSIC_KIT_TEAM_ID: ${{ secrets.MUSIC_KIT_TEAM_ID }}
+          MUSIC_KIT_KEY_ID: ${{ secrets.MUSIC_KIT_KEY_ID }}
+          MUSIC_KIT_APP_NAME: ${{ secrets.MUSIC_KIT_APP_NAME }}
+          MUSIC_KIT_APP_BUILD: ${{ secrets.MUSIC_KIT_APP_BUILD}}
 
       - name: Test
         run: npm run test
+        env:
+          MUSIC_KIT_DEVELOPER_KEY: ${{ secrets.MUSIC_KIT_DEVELOPER_KEY }}
+          MUSIC_KIT_TEAM_ID: ${{ secrets.MUSIC_KIT_TEAM_ID }}
+          MUSIC_KIT_KEY_ID: ${{ secrets.MUSIC_KIT_KEY_ID }}
+          MUSIC_KIT_APP_NAME: ${{ secrets.MUSIC_KIT_APP_NAME }}
+          MUSIC_KIT_APP_BUILD: ${{ secrets.MUSIC_KIT_APP_BUILD}}
