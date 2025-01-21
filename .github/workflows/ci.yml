@@ -35,6 +35,13 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install OpenSSL
+        run: |
+          sudo add-apt-repository ppa:openssl/openssl -y
+          sudo apt-get update
+          sudo apt-get install openssl -y
+          openssl version
+
       - name: Install dependencies
         run: npx npm@latest i
 
