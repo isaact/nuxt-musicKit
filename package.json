@@ -1,12 +1,19 @@
 {
   "name": "nuxt-musickit",
   "version": "1.0.2",
-  "description": "Nuxt MusicKit Modue",
+  "description": "Nuxt MusicKit Module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/isaact/nuxt-musicKit.git"
+    "url": "https://github.com/isaact/nuxt-musicKit.git"
   },
   "license": "MIT",
+  "author": {
+    "name": "Isaac Tewolde",
+    "url": "https://github.com/isaact/nuxt-musicKit"
+  },
+  "bugs": {
+    "url": "https://github.com/isaact/nuxt-musicKit/issues"
+  },
   "type": "module",
   "exports": {
     ".": {
