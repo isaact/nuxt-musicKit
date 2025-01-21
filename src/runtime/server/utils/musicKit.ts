@@ -9,6 +9,10 @@ export async function generateDeveloperToken(privateKey: string, teamId: string,
         })
     }
 
+    // Strip out the headers and all whitespace characters from the private key
+    privateKey = privateKey.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s+/g, '')
+    privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----`
+
     // Validate private key format
     if (!privateKey.startsWith('-----BEGIN PRIVATE KEY-----') || 
         !privateKey.includes('-----END PRIVATE KEY-----')) {
@@ -19,11 +23,6 @@ export async function generateDeveloperToken(privateKey: string, teamId: string,
     }
 
     try {
-        // Debug output
-        console.log('Private key length:', privateKey.length)
-        console.log('Team ID:', teamId)
-        console.log('Key ID:', keyId)
-
         const ecPrivateKey = await importPKCS8(privateKey, 'ES256')
         const now = Math.floor(Date.now() / 1000)
         
@@ -37,7 +36,6 @@ export async function generateDeveloperToken(privateKey: string, teamId: string,
 
         return token
     } catch (error) {
-        console.error('Failed to generate developer token:', error)
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         const errorStack = error instanceof Error ? error.stack : undefined
         throw createError({
