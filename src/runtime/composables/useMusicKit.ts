@@ -1,26 +1,27 @@
 import { ref, onMounted, useRuntimeConfig, computed } from '#imports'
 import { isTokenExpired } from '../server/utils/musicKit'
+import type { MusicKitInstance } from '~/src/types/musicKit'
 
-declare global {
-  interface Window {
-    MusicKit?: {
-      // Basic MusicKit properties
-      initialized: boolean
-      version: string
-      configure: (config: {
-        developerToken: string
-        app: {
-          name: string
-          build: string
-        }
-      }) => Promise<void>
-      getInstance: () => MusicKitInstance
-      api: {
-        music: (path: string) => Promise<MusicKitApiResponse>
-      }
-    }
-  }
-}
+// declare global {
+//   interface Window {
+//     MusicKit?: {
+//       // Basic MusicKit properties
+//       initialized: boolean
+//       version: string
+//       configure: (config: {
+//         developerToken: string
+//         app: {
+//           name: string
+//           build: string
+//         }
+//       }) => Promise<void>
+//       getInstance: () => MusicKitInstance
+//       api: {
+//         music: (path: string) => Promise<MusicKitApiResponse>
+//       }
+//     }
+//   }
+// }
 
 const devToken = ref('')
 const musicKitConnected = ref(false)
@@ -29,21 +30,6 @@ const musicKitConnected = ref(false)
 const musicKitLoaded = ref(false)
 // const error = ref(null)
 
-const fetchToken = async () => {
-  try {
-    const response = await fetch('/api/token')
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = await response.json()
-    devToken.value = data.token
-    console.log(devToken.value)
-    return data.token
-  } catch (err) {
-    console.log(err)
-    throw err
-  }
-}
 const testConnection = async (musicKit: MusicKitInstance) =>  {
   if(musicKit){
     console.log(musicKit)
@@ -65,6 +51,22 @@ export function useMusicKit() {
   const tokenExpired = computed(() => {
     return isTokenExpired(devToken.value)
   })
+
+  async function fetchToken() {
+    try {
+      const response = await fetch(musicKitOptions.MUSICKIT_TOKEN_API_URL)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      devToken.value = data.token
+      console.log(devToken.value)
+      return data.token
+    } catch (err) {
+      console.log(err)
+      throw err
+    }
+  }
   const initialize = async () => {
     if(window.MusicKit && !musicKitConnected.value){
       musicKitLoaded.value = true

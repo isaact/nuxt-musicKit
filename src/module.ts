@@ -16,6 +16,7 @@ declare global {
     MUSICKIT_TOKEN: string
     MUSICKIT_APP_NAME: string
     MUSICKIT_APP_BUILD: string
+    MUSICKIT_TOKEN_API_URL: string
   }
 }
 
@@ -72,7 +73,8 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.public.musicKit = defu(nuxt.options.runtimeConfig.public.musicKit as PublicMusicKitConfig, {
       MUSICKIT_TOKEN: token,
       MUSICKIT_APP_NAME: options.appName,
-      MUSICKIT_APP_BUILD: options.appBuild
+      MUSICKIT_APP_BUILD: options.appBuild,
+      MUSICKIT_TOKEN_API_URL: options.apiURL
     })
 
     addImports({
