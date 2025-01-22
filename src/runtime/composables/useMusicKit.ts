@@ -1,27 +1,6 @@
 import { ref, onMounted, useRuntimeConfig, computed } from '#imports'
 import { isTokenExpired } from '../server/utils/musicKit'
 
-// declare global {
-//   interface Window {
-//     MusicKit?: {
-//       // Basic MusicKit properties
-//       initialized: boolean
-//       version: string
-//       configure: (config: {
-//         developerToken: string
-//         app: {
-//           name: string
-//           build: string
-//         }
-//       }) => Promise<void>
-//       getInstance: () => MusicKitInstance
-//       api: {
-//         music: (path: string) => Promise<MusicKitApiResponse>
-//       }
-//     }
-//   }
-// }
-
 const devToken = ref('')
 const musicKitConnected = ref(false)
 // const userToken = ref(null)
