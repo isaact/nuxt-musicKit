@@ -1,6 +1,5 @@
 import { ref, onMounted, useRuntimeConfig, computed } from '#imports'
 import { isTokenExpired } from '../server/utils/musicKit'
-import type { MusicKitInstance } from '~/src/types/musicKit'
 
 // declare global {
 //   interface Window {
