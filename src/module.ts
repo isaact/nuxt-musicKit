@@ -9,6 +9,7 @@ export interface ModuleOptions {
   keyID: string
   appName: string
   appBuild: string
+  apiURL?: string
 }
 declare global {
   interface PublicMusicKitConfig {
@@ -31,6 +32,7 @@ export default defineNuxtModule<ModuleOptions>({
     keyID: process.env.MUSIC_KIT_KEY_ID,
     appName: process.env.MUSIC_KIT_APP_NAME,
     appBuild: process.env.MUSIC_KIT_APP_BUILD,
+    apiURL: process.env.MUSIC_KIT_API_URL || '/api/musicKit-token',
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -45,12 +47,14 @@ export default defineNuxtModule<ModuleOptions>({
     });
 
     nuxt.options.runtimeConfig.musicKit = defu(nuxt.options.runtimeConfig.musicKit || {}, options)
-    const musicKitOptions = nuxt.options.runtimeConfig.musicKit
+    const musicKitOptions = nuxt.options.runtimeConfig.musicKit as ModuleOptions
 
-    addServerHandler({
-      route: '/api/token',
-      handler: resolver.resolve('./runtime/server/api/token'),
-    })
+    if (musicKitOptions.apiURL && !musicKitOptions.apiURL.startsWith('http://') && !musicKitOptions.apiURL.startsWith('https://')) {
+      addServerHandler({
+        route: musicKitOptions.apiURL,
+        handler: resolver.resolve('./runtime/server/api/token'),
+      })
+    }
     if(musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID){
       try {
         token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID)
