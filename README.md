@@ -40,24 +40,32 @@ export default defineNuxtConfig({
 })
 ```
 
-3. Use the `useMusicKit` composable in your components:
+3. Use the `useMusicKit` composable with proper initialization:
 
 ```vue
 <script setup>
-const { musicKit, isAuthorized } = useMusicKit()
+const { getInstance, musicKitConnected, tokenExpired } = useMusicKit()
 
 async function playSong() {
-  await musicKit.setQueue({ song: '123456789' })
-  await musicKit.play()
+  const musicKit = await getInstance()
+  if (musicKit) {
+    await musicKit.setQueue({ song: '123456789' })
+    await musicKit.play()
+  }
 }
 </script>
 
 <template>
-  <button @click="playSong" :disabled="!isAuthorized">
+  <button @click="playSong" :disabled="!musicKitConnected || tokenExpired">
     Play Song
   </button>
 </template>
 ```
+
+**Available Composables:**
+- `getInstance(): Promise<MusicKitInstance>` - Initialize and get MusicKit instance
+- `musicKitConnected: Ref<boolean>` - Connection status
+- `tokenExpired: Ref<boolean>` - Dev token expiration state
 
 ## Obtaining MusicKit Credentials
 
