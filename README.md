@@ -118,7 +118,7 @@ MUSIC_KIT_APP_BUILD="1.0"
 [npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-musickit.svg?style=flat&colorA=020420&colorB=00DC82
 [npm-downloads-href]: https://npm.chart.dev/nuxt-musickit
 
-[license-src]: https://img.shields.io/npm/l/nuxt-musicKit.svg?style=flat&colorA=020420&colorB=00DC82
+[license-src]: https://img.shields.io/npm/l/nuxt-musickit.svg?style=flat&colorA=020420&colorB=00DC82
 [license-href]: https://npmjs.com/package/nuxt-musickit
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
