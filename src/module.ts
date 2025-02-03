@@ -3,14 +3,14 @@ import { defu } from 'defu'
 import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
 // Module options TypeScript interface definition
-type ModuleOptions = {
-  clientModeOnly: boolean;
+export type ModuleOptions = {
+  clientModeOnly?: boolean;
   appName: string;
   appBuild: string;
   devTokenUrl?: string;
+  developerKey?: string;
   teamID?: string;
   keyID?: string;
-  developerKey?: string;
 };
 
 declare global {
@@ -53,12 +53,6 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.musicKit = defu(nuxt.options.runtimeConfig.musicKit || {}, options)
     const musicKitOptions = nuxt.options.runtimeConfig.musicKit as ModuleOptions
 
-    if (musicKitOptions.devTokenUrl && !musicKitOptions.devTokenUrl.startsWith('http://') && !musicKitOptions.devTokenUrl.startsWith('https://')) {
-      addServerHandler({
-        route: musicKitOptions.devTokenUrl,
-        handler: resolver.resolve('./runtime/server/api/token'),
-      })
-    }
     if (musicKitOptions.clientModeOnly && musicKitOptions.devTokenUrl) {
       try {
         const response = await fetch(musicKitOptions.devTokenUrl);
@@ -74,6 +68,13 @@ export default defineNuxtModule<ModuleOptions>({
     } else if (musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID) {
       try {
         token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID);
+        if (musicKitOptions.devTokenUrl && !musicKitOptions.devTokenUrl.startsWith('http://') && !musicKitOptions.devTokenUrl.startsWith('https://')) {
+          addServerHandler({
+            route: musicKitOptions.devTokenUrl,
+            handler: resolver.resolve('./runtime/server/api/token'),
+          })
+        }
+
       } catch (error) {
         console.warn('Failed to generate Apple Music developer token:', error);
         console.warn('MusicKit functionality will be limited without a valid token');
