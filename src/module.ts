@@ -3,14 +3,16 @@ import { defu } from 'defu'
 import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
 // Module options TypeScript interface definition
-export interface ModuleOptions {
-  developerKey: string
-  teamID: string
-  keyID: string
-  appName: string
-  appBuild: string
-  apiURL?: string
-}
+type ModuleOptions = {
+  clientModeOnly: boolean;
+  appName: string;
+  appBuild: string;
+  devTokenUrl?: string;
+  teamID?: string;
+  keyID?: string;
+  developerKey?: string;
+};
+
 declare global {
   interface PublicMusicKitConfig {
     MUSICKIT_TOKEN: string
@@ -28,12 +30,13 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {
-    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
+    clientModeOnly: false,
     teamID: process.env.MUSIC_KIT_TEAM_ID,
     keyID: process.env.MUSIC_KIT_KEY_ID,
     appName: process.env.MUSIC_KIT_APP_NAME,
     appBuild: process.env.MUSIC_KIT_APP_BUILD,
-    apiURL: process.env.MUSIC_KIT_API_URL || '/api/musicKit-token',
+    devTokenUrl: process.env.MUSIC_KIT_API_URL || '/api/musicKit-token',
+    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
   },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -50,22 +53,34 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.musicKit = defu(nuxt.options.runtimeConfig.musicKit || {}, options)
     const musicKitOptions = nuxt.options.runtimeConfig.musicKit as ModuleOptions
 
-    if (musicKitOptions.apiURL && !musicKitOptions.apiURL.startsWith('http://') && !musicKitOptions.apiURL.startsWith('https://')) {
+    if (musicKitOptions.devTokenUrl && !musicKitOptions.devTokenUrl.startsWith('http://') && !musicKitOptions.devTokenUrl.startsWith('https://')) {
       addServerHandler({
-        route: musicKitOptions.apiURL,
+        route: musicKitOptions.devTokenUrl,
         handler: resolver.resolve('./runtime/server/api/token'),
       })
     }
-    if(musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID){
+    if (musicKitOptions.clientModeOnly && musicKitOptions.devTokenUrl) {
       try {
-        token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID)
+        const response = await fetch(musicKitOptions.devTokenUrl);
+        const tokenData = await response.json();
+        token = tokenData.token;
+        if (!token) {
+          throw new Error('Invalid token response');
+        }
       } catch (error) {
-        console.warn('Failed to generate Apple Music developer token:', error)
-        console.warn('MusicKit functionality will be limited without a valid token')
+        console.warn('Failed to fetch developer token:', error);
+        console.warn('MusicKit functionality will be limited without a valid token');
+      }
+    } else if (musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID) {
+      try {
+        token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID);
+      } catch (error) {
+        console.warn('Failed to generate Apple Music developer token:', error);
+        console.warn('MusicKit functionality will be limited without a valid token');
       }
     } else {
-      console.warn('Missing required Apple Music authentication credentials')
-      console.warn('MusicKit functionality will be limited without a valid token')
+      console.warn('Missing required Apple Music authentication credentials');
+      console.warn('MusicKit functionality will be limited without a valid token');
     }
     
 
@@ -74,7 +89,7 @@ export default defineNuxtModule<ModuleOptions>({
       MUSICKIT_TOKEN: token,
       MUSICKIT_APP_NAME: options.appName,
       MUSICKIT_APP_BUILD: options.appBuild,
-      MUSICKIT_TOKEN_API_URL: options.apiURL
+      MUSICKIT_TOKEN_API_URL: options.devTokenUrl
     })
 
     addImports({
