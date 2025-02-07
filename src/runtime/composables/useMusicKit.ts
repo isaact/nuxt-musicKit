@@ -47,6 +47,9 @@ export function useMusicKit() {
   }
   const initialize = async () => {
     if(window.MusicKit && !musicKitConnected.value){
+      if(tokenExpired){
+        await fetchToken();
+      }
       musicKitLoaded.value = true
       const mkConfig = {
         developerToken: devToken.value,
