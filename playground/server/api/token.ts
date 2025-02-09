@@ -15,7 +15,13 @@ export default defineEventHandler(async (_) => {
     const token = await generateDeveloperToken(developerKey, teamID, keyID)
 
     // Return the token as a response
-    return { token }
+    return {
+      developerToken: token,
+      app: {
+        name: config.musicKit.appName,
+        build: config.musicKit.appBuild
+      }
+    }
 
   } catch (error: unknown) {
     // Type narrow the error before accessing properties

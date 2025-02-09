@@ -99,15 +99,15 @@ export default defineNuxtModule({
       as: 'useMusicKit',
       from: resolver.resolve('./runtime/composables/useMusicKit') // path of composable
     })
-    // Server-side utilities
-    addServerImports([{
-      name: 'generateDeveloperToken',
-      from: resolver.resolve('./runtime/server/utils/musicKit')
-    }])
     addImports({
     // Client-side composables
       name: 'isTokenExpired',
       from: resolver.resolve('./runtime/utils/musicKit')
     })
+    // Server-side utilities
+    addServerImports([{
+      name: 'generateDeveloperToken',
+      from: resolver.resolve('./runtime/server/utils/musicKit')
+    }])
   },
 })
