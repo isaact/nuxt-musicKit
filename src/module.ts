@@ -1,13 +1,15 @@
 import { defineNuxtModule, createResolver, addServerHandler, addImports } from '@nuxt/kit'
 import { defu } from 'defu'
-import { generateDeveloperToken } from './runtime/server/utils/musicKit'
+// import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
 // Module options TypeScript interface definition
 export type ModuleOptions = {
   clientModeOnly?: boolean;
   appName: string;
   appBuild: string;
-  devTokenUrl?: string;
+  developerToken?:string;
+
+  
   developerKey?: string;
   teamID?: string;
   keyID?: string;
@@ -51,55 +53,52 @@ export default defineNuxtModule<ModuleOptions>({
     });
 
     nuxt.options.runtimeConfig.musicKit = defu(nuxt.options.runtimeConfig.musicKit || {}, options)
-    const musicKitOptions = nuxt.options.runtimeConfig.musicKit as ModuleOptions
+    // const musicKitOptions = nuxt.options.runtimeConfig.musicKit as ModuleOptions
 
-    if (musicKitOptions.clientModeOnly && musicKitOptions.devTokenUrl) {
-      try {
-        const response = await fetch(musicKitOptions.devTokenUrl);
-        const tokenData = await response.json();
-        token = tokenData.token;
-        if (!token) {
-          throw new Error('Invalid token response');
-        }
-      } catch (error) {
-        console.warn('Failed to fetch developer token:', error);
-        console.warn('MusicKit functionality will be limited without a valid token');
-      }
-    } else if (musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID) {
-      try {
-        token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID);
-        if (musicKitOptions.devTokenUrl && !musicKitOptions.devTokenUrl.startsWith('http://') && !musicKitOptions.devTokenUrl.startsWith('https://')) {
-          addServerHandler({
-            route: musicKitOptions.devTokenUrl,
-            handler: resolver.resolve('./runtime/server/api/token'),
-          })
-        }
+    // if (musicKitOptions.clientModeOnly && musicKitOptions.devTokenUrl) {
+    //   try {
+    //     const response = await fetch(musicKitOptions.devTokenUrl);
+    //     const tokenData = await response.json();
+    //     token = tokenData.token;
+    //     if (!token) {
+    //       throw new Error('Invalid token response');
+    //     }
+    //   } catch (error) {
+    //     console.warn('Failed to fetch developer token:', error);
+    //     console.warn('MusicKit functionality will be limited without a valid token');
+    //   }
+    // } else if (musicKitOptions.developerKey && musicKitOptions.teamID && musicKitOptions.keyID) {
+    //   try {
+    //     token = await generateDeveloperToken(musicKitOptions.developerKey, musicKitOptions.teamID, musicKitOptions.keyID);
+    //     if (musicKitOptions.devTokenUrl && !musicKitOptions.devTokenUrl.startsWith('http://') && !musicKitOptions.devTokenUrl.startsWith('https://')) {
+    //       addServerHandler({
+    //         route: musicKitOptions.devTokenUrl,
+    //         handler: resolver.resolve('./runtime/server/api/token'),
+    //       })
+    //     }
 
-      } catch (error) {
-        console.warn('Failed to generate Apple Music developer token:', error);
-        console.warn('MusicKit functionality will be limited without a valid token');
-      }
-    } else {
-      console.warn('Missing required Apple Music authentication credentials');
-      console.warn('MusicKit functionality will be limited without a valid token');
-    }
+    //   } catch (error) {
+    //     console.warn('Failed to generate Apple Music developer token:', error);
+    //     console.warn('MusicKit functionality will be limited without a valid token');
+    //   }
+    // } else {
+    //   console.warn('Missing required Apple Music authentication credentials');
+    //   console.warn('MusicKit functionality will be limited without a valid token');
+    // }
     
 
-    // nuxt.options.runtimeConfig.public.musicKit ||= {}
-    nuxt.options.runtimeConfig.public.musicKit = defu(nuxt.options.runtimeConfig.public.musicKit as PublicMusicKitConfig, {
-      MUSICKIT_TOKEN: token,
-      MUSICKIT_APP_NAME: options.appName,
-      MUSICKIT_APP_BUILD: options.appBuild,
-      MUSICKIT_TOKEN_API_URL: options.devTokenUrl
-    })
+    // // nuxt.options.runtimeConfig.public.musicKit ||= {}
+    // nuxt.options.runtimeConfig.public.musicKit = defu(nuxt.options.runtimeConfig.public.musicKit as PublicMusicKitConfig, {
+    //   MUSICKIT_TOKEN: token,
+    //   MUSICKIT_APP_NAME: options.appName,
+    //   MUSICKIT_APP_BUILD: options.appBuild,
+    //   // MUSICKIT_TOKEN_API_URL: options.devTokenUrl
+    // })
 
     addImports({
       name: 'useMusicKit', // name of the composable to be used
       as: 'useMusicKit',
       from: resolver.resolve('./runtime/composables/useMusicKit') // path of composable
     })
-
-    // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-    // addPlugin(resolver.resolve('./runtime/plugin'))
   },
 })

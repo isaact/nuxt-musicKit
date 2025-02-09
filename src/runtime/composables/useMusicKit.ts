@@ -1,10 +1,8 @@
 import { ref, onMounted, useRuntimeConfig, computed } from '#imports'
-import { isTokenExpired } from '../server/utils/musicKit'
+import { isTokenExpired, generateDeveloperToken } from '../server/utils/musicKit'
 
 const devToken = ref('')
 const musicKitConnected = ref(false)
-// const userToken = ref(null)
-// const authorized = ref(false)
 const musicKitLoaded = ref(false)
 // const error = ref(null)
 
@@ -30,48 +28,43 @@ export function useMusicKit() {
     return isTokenExpired(devToken.value)
   })
 
-  async function fetchToken() {
-    try {
-      const response = await fetch(musicKitOptions.MUSICKIT_TOKEN_API_URL)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const data = await response.json()
-      devToken.value = data.token
-      console.log(devToken.value)
-      return data.token
-    } catch (err) {
-      console.log(err)
-      throw err
-    }
-  }
-  const initialize = async () => {
+  // async function fetchToken() {
+  //   try {
+  //     const response = await fetch(musicKitOptions.MUSICKIT_TOKEN_API_URL)
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`)
+  //     }
+  //     const data = await response.json()
+  //     devToken.value = data.token
+  //     console.log(devToken.value)
+  //     return data.token
+  //   } catch (err) {
+  //     console.log(err)
+  //     throw err
+  //   }
+  // }
+  const initialize = async (dev_token:string) => {
     if(window.MusicKit && !musicKitConnected.value){
-      if(tokenExpired){
-        await fetchToken();
-      }
-      musicKitLoaded.value = true
-      const mkConfig = {
-        developerToken: devToken.value,
-        app: {
-          name: musicKitOptions.MUSICKIT_APP_NAME,
-          build: musicKitOptions.MUSICKIT_APP_BUILD,
-        },
-      }
-      await window.MusicKit.configure(mkConfig)
-      const musicKit = window.MusicKit?.getInstance()
-      if(musicKit){
-        await testConnection(musicKit)
+      devToken.value = dev_token;
+      if(!tokenExpired){
+        musicKitLoaded.value = true
+        const mkConfig = {
+          developerToken: devToken.value,
+          app: {
+            name: musicKitOptions.MUSICKIT_APP_NAME,
+            build: musicKitOptions.MUSICKIT_APP_BUILD,
+          },
+        }
+        await window.MusicKit.configure(mkConfig)
+        const musicKit = window.MusicKit?.getInstance()
+        if(musicKit){
+          await testConnection(musicKit)
+        }
       }
     }
   }
   const getInstance = async (): Promise<MusicKitInstance | undefined> => {
-    if (window.MusicKit && musicKitLoaded.value) {
-      if (isTokenExpired(devToken.value)) {
-        await fetchToken();
-        await initialize();
-      }
-  
+    if (window.MusicKit && musicKitLoaded.value && !isTokenExpired(devToken.value)) {  
       const instance = window.MusicKit.getInstance();
       return instance;
     }
@@ -96,9 +89,9 @@ export function useMusicKit() {
 
   return {
     devToken,
-    // authorized,
     musicKitLoaded,
     musicKitConnected,
+    generateDeveloperToken,
     getInstance,
     tokenExpired
   }
