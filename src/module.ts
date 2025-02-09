@@ -1,48 +1,47 @@
-import { defineNuxtModule, createResolver, addServerHandler, addImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImports, addServerImports } from '@nuxt/kit'
 import { defu } from 'defu'
 // import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
 // Module options TypeScript interface definition
-export type ModuleOptions = {
-  clientModeOnly?: boolean;
-  appName: string;
-  appBuild: string;
-  developerToken?:string;
+// export type ModuleOptions = {
+//   clientModeOnly?: boolean;
+//   appName: string;
+//   appBuild: string;
+//   developerToken?:string;
 
   
-  developerKey?: string;
-  teamID?: string;
-  keyID?: string;
-};
+//   developerKey?: string;
+//   teamID?: string;
+//   keyID?: string;
+// };
 
-declare global {
-  interface PublicMusicKitConfig {
-    MUSICKIT_TOKEN: string
-    MUSICKIT_APP_NAME: string
-    MUSICKIT_APP_BUILD: string
-    MUSICKIT_TOKEN_API_URL: string
-  }
-}
+// declare global {
+//   interface PublicMusicKitConfig {
+//     MUSICKIT_TOKEN: string
+//     MUSICKIT_APP_NAME: string
+//     MUSICKIT_APP_BUILD: string
+//     MUSICKIT_TOKEN_API_URL: string
+//   }
+// }
 
 
-export default defineNuxtModule<ModuleOptions>({
+export default defineNuxtModule({
   meta: {
-    name: 'my-module',
+    name: 'nuxt-musickit',
     configKey: 'musicKit',
   },
   // Default configuration options of the Nuxt module
-  defaults: {
-    clientModeOnly: false,
-    teamID: process.env.MUSIC_KIT_TEAM_ID,
-    keyID: process.env.MUSIC_KIT_KEY_ID,
-    appName: process.env.MUSIC_KIT_APP_NAME,
-    appBuild: process.env.MUSIC_KIT_APP_BUILD,
-    devTokenUrl: process.env.MUSIC_KIT_API_URL || '/api/musicKit-token',
-    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
-  },
+  // defaults: {
+  //   clientModeOnly: false,
+  //   teamID: process.env.MUSIC_KIT_TEAM_ID,
+  //   keyID: process.env.MUSIC_KIT_KEY_ID,
+  //   appName: process.env.MUSIC_KIT_APP_NAME,
+  //   appBuild: process.env.MUSIC_KIT_APP_BUILD,
+  //   devTokenUrl: process.env.MUSIC_KIT_API_URL || '/api/musicKit-token',
+  //   developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
+  // },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    let token = ''
 
     nuxt.options.app.head.script ||= []
     // Extend Nuxt config to load the MusicKit.js library
@@ -99,6 +98,16 @@ export default defineNuxtModule<ModuleOptions>({
       name: 'useMusicKit', // name of the composable to be used
       as: 'useMusicKit',
       from: resolver.resolve('./runtime/composables/useMusicKit') // path of composable
+    })
+    // Server-side utilities
+    addServerImports([{
+      name: 'generateDeveloperToken',
+      from: resolver.resolve('./runtime/server/utils/musicKit')
+    }])
+    addImports({
+    // Client-side composables
+      name: 'isTokenExpired',
+      from: resolver.resolve('./runtime/utils/musicKit')
     })
   },
 })

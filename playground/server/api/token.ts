@@ -1,6 +1,5 @@
 import { defineEventHandler, createError } from 'h3'
-import { useRuntimeConfig } from '#imports'
-import { generateDeveloperToken } from '../utils/musicKit'
+import { useRuntimeConfig, generateDeveloperToken } from '#imports'
 
 export default defineEventHandler(async (_) => {
   const config = useRuntimeConfig()
@@ -37,3 +36,4 @@ export default defineEventHandler(async (_) => {
     })
   }
 })
+

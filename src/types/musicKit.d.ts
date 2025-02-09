@@ -44,6 +44,10 @@ interface MusicKitConfiguration {
   };
 }
 
+interface FetchMusicKitConfig {
+  (): Promise<MusicKitConfiguration>;
+}
+
 // Options for setting the queue
 interface MusicKitSetQueueOptions {
   song: string;
