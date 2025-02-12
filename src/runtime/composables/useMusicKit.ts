@@ -6,7 +6,7 @@ import { isTokenExpired } from '../server/utils/musicKit'
 const musicKitConnected = ref(false)
 const musicKitLoaded = ref(false)
 const updateToken = ref<FetchMusicKitConfig | null>(null)
-const musicKitConfig = ref<MusicKitConfiguration | null>(null)
+const musicKitConfig = ref<MusicKitConfig | null>(null)
 
 const testConnection = async (musicKit: MusicKitInstance) =>  {
   if(musicKit){
@@ -90,7 +90,6 @@ export function useMusicKit(updateTokenHandler: FetchMusicKitConfig) {
   return {
     musicKitLoaded,
     musicKitConnected,
-    generateDeveloperToken,
     getInstance,
     tokenExpired
   }

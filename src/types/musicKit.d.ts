@@ -35,8 +35,15 @@ interface MusicKitInstance {
   playbackState: number; // This can be typed as an enum if needed
 }
 
+interface MusicKitServerConfig {
+  appName: string;
+  appBuild: string;
+  developerKey: string;
+  teamID: string;
+  keyID: string;
+}
 // Define the configuration for MusicKit
-interface MusicKitConfiguration {
+interface MusicKitConfig {
   developerToken: string;
   app: {
     name: string;
@@ -45,7 +52,7 @@ interface MusicKitConfiguration {
 }
 
 interface FetchMusicKitConfig {
-  (): Promise<MusicKitConfiguration>;
+  (): Promise<MusicKitConfig>;
 }
 
 // Options for setting the queue
@@ -84,7 +91,7 @@ interface MusicKitQueue {
 declare global {
   interface Window {
     MusicKit: {
-      configure(config: MusicKitConfiguration): Promise<void>;
+      configure(config: MusicKitConfig): Promise<void>;
       getInstance(): MusicKitInstance;
     };
   }

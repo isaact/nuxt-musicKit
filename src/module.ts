@@ -2,18 +2,7 @@ import { defineNuxtModule, createResolver, addImports, addServerImports } from '
 import { defu } from 'defu'
 // import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
-// Module options TypeScript interface definition
-// export type ModuleOptions = {
-//   clientModeOnly?: boolean;
-//   appName: string;
-//   appBuild: string;
-//   developerToken?:string;
-
-  
-//   developerKey?: string;
-//   teamID?: string;
-//   keyID?: string;
-// };
+export type ModuleOptions = MusicKitServerConfig
 
 // declare global {
 //   interface PublicMusicKitConfig {
@@ -31,15 +20,13 @@ export default defineNuxtModule({
     configKey: 'musicKit',
   },
   // Default configuration options of the Nuxt module
-  // defaults: {
-  //   clientModeOnly: false,
-  //   teamID: process.env.MUSIC_KIT_TEAM_ID,
-  //   keyID: process.env.MUSIC_KIT_KEY_ID,
-  //   appName: process.env.MUSIC_KIT_APP_NAME,
-  //   appBuild: process.env.MUSIC_KIT_APP_BUILD,
-  //   devTokenUrl: process.env.MUSIC_KIT_API_URL || '/api/musicKit-token',
-  //   developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
-  // },
+  defaults: {
+    teamID: process.env.MUSIC_KIT_TEAM_ID,
+    keyID: process.env.MUSIC_KIT_KEY_ID,
+    appName: process.env.MUSIC_KIT_APP_NAME,
+    appBuild: process.env.MUSIC_KIT_APP_BUILD,
+    developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
+  },
   async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
@@ -99,15 +86,10 @@ export default defineNuxtModule({
       as: 'useMusicKit',
       from: resolver.resolve('./runtime/composables/useMusicKit') // path of composable
     })
-    addImports({
-    // Client-side composables
-      name: 'isTokenExpired',
-      from: resolver.resolve('./runtime/utils/musicKit')
-    })
     // Server-side utilities
     addServerImports([{
-      name: 'generateDeveloperToken',
-      from: resolver.resolve('./runtime/server/utils/musicKit')
+      name: 'useMusicKitTools',
+      from: resolver.resolve('./runtime/server/composables/useMusicKitTools.ts')
     }])
   },
 })

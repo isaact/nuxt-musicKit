@@ -61,9 +61,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useMusicKit } from '#imports'
-const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit()
+
+
+const fetchMusicKitConfig:FetchMusicKitConfig = async () => {
+  const config = await $fetch('/api/token')
+  if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
+    throw new Error('Invalid MusicKit configuration received from server')
+  }
+  return config
+}
+
+const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit(fetchMusicKitConfig)
 
 const loading = ref(true)
 const error = ref(null)
