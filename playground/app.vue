@@ -119,8 +119,8 @@ watch(musicKitLoaded, async (loaded) => {
   if (loaded) {
     try {
       loading.value = false
-    } catch (err) {
-      error.value = err.message
+    } catch (err: unknown) {
+      error.value = err instanceof Error ? err.message : String(err)
       loading.value = false
     }
   }
