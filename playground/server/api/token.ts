@@ -1,4 +1,5 @@
 import { defineEventHandler, createError } from 'h3'
+import { generateMusicKitConfig } from "#imports"
 
 export default defineEventHandler(async (_) => {
   try {
