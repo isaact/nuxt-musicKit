@@ -1,6 +1,5 @@
-import { defineNuxtModule, createResolver, addImports, addServerImports } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImports, addImportsDir } from '@nuxt/kit'
 import { defu } from 'defu'
-// import { generateDeveloperToken } from './runtime/server/utils/musicKit'
 
 export type ModuleOptions = MusicKitServerConfig
 
@@ -86,10 +85,11 @@ export default defineNuxtModule({
       as: 'useMusicKit',
       from: resolver.resolve('./runtime/composables/useMusicKit') // path of composable
     })
+    addImportsDir('./runtime/server/composables')
     // Server-side utilities
-    addServerImports([{
-      name: 'useMusicKitTools',
-      from: resolver.resolve('./runtime/server/composables/useMusicKitTools.ts')
-    }])
+    // addServerImports([{
+    //   name: 'generateMusicKitConfig',
+    //   from: resolver.resolve('./runtime/server/composables/useMusicKitTools.ts')
+    // }])
   },
 })

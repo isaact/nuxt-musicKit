@@ -1,8 +1,8 @@
-// import { isTokenExpired } from '../utils/musicKit'
-import { generateDeveloperToken, useRuntimeConfig } from "#imports";
+import { generateDeveloperToken } from '../utils/musicKit'
+import { useRuntimeConfig } from "#imports";
 
 
-export async function useMusicKitTools(): Promise<MusicKitConfig> {
+export async function generateMusicKitConfig(): Promise<MusicKitConfig> { // Returns Promise due to async token generation
     const config = useRuntimeConfig()
     // Ensure the keys exist in the config
     const { appName, appBuild, developerKey, teamID, keyID } = config.musicKit as MusicKitServerConfig

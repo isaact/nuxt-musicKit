@@ -1,27 +1,10 @@
 import { defineEventHandler, createError } from 'h3'
-import { useRuntimeConfig, generateDeveloperToken } from '#imports'
 
 export default defineEventHandler(async (_) => {
-  const config = useRuntimeConfig()
-
   try {
-    // Ensure the keys exist in the config
-    const { developerKey, teamID, keyID } = config.musicKit
-    if (!developerKey || !teamID || !keyID) {
-      throw new Error('Missing required musicKitLoader keys in runtime config.')
-    }
-
-    // Generate the token using your utility function
-    const token = await generateDeveloperToken(developerKey, teamID, keyID)
-
-    // Return the token as a response
-    return {
-      developerToken: token,
-      app: {
-        name: config.musicKit.appName,
-        build: config.musicKit.appBuild
-      }
-    }
+    // Get pre-validated config with fresh token
+    const musicKitConfig = await generateMusicKitConfig()
+    return musicKitConfig
 
   } catch (error: unknown) {
     // Type narrow the error before accessing properties
