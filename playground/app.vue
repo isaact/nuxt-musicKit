@@ -65,7 +65,7 @@
 import { useMusicKit } from '#imports'
 
 
-const fetchMusicKitConfig:FetchMusicKitConfig = async () => {
+const fetchMusicKitConfig = async () => {
   const config = await $fetch('/api/token')
   if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
     throw new Error('Invalid MusicKit configuration received from server')

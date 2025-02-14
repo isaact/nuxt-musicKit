@@ -21,6 +21,7 @@ const testConnection = async (musicKit: MusicKitInstance) =>  {
   return false
 }
 
+
 export function useMusicKit(updateTokenHandler: FetchMusicKitConfig) {
   // const config = useRuntimeConfig()
   updateToken.value = updateTokenHandler
@@ -34,21 +35,6 @@ export function useMusicKit(updateTokenHandler: FetchMusicKitConfig) {
     return true;
   })
 
-  // async function fetchToken() {
-  //   try {
-  //     const response = await fetch(musicKitOptions.MUSICKIT_TOKEN_API_URL)
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`)
-  //     }
-  //     const data = await response.json()
-  //     devToken.value = data.token
-  //     console.log(devToken.value)
-  //     return data.token
-  //   } catch (err) {
-  //     console.log(err)
-  //     throw err
-  //   }
-  // }
   const initialize = async () => {
     if(window.MusicKit && !musicKitConnected.value){
       if(tokenExpired && updateToken.value){
