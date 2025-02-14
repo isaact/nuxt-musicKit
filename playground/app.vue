@@ -76,15 +76,15 @@ const fetchMusicKitConfig = async () => {
 const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit(fetchMusicKitConfig)
 
 const loading = ref(true)
-const error = ref(null)
+const error = ref<string>('')
 const searchQuery = ref('')
 const searchResults = ref([])
 
 const renewToken = async () => {
   try {
     await getInstance()
-  } catch (err) {
-    error.value = err.message
+  } catch (err: unknown) {
+    error.value = err instanceof Error ? err.message : String(err)
   }
 }
 
@@ -108,9 +108,9 @@ const searchAlbums = async () => {
     })
     
     searchResults.value = response.data.results.albums?.data || []
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('Search Albums Error:', err)
-    error.value = `Error: ${err.message} - ${err.response?.data?.errors?.[0]?.detail || 'No additional details'}`
+    error.value = err instanceof Error ? err.message : String(err)
     searchResults.value = []
   }
 }
