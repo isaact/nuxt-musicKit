@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
-import type { FetchMusicKitConfig } from '../src/types/musicKit'
+import type { FetchMusicKitConfig, MusicKitAlbum } from '../src/types/musicKit'
 
 const fetchMusicKitConfig:FetchMusicKitConfig = async () => {
   const config = await $fetch('/api/token')
@@ -78,7 +78,7 @@ const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusi
 const loading = ref(true)
 const error = ref<string>('')
 const searchQuery = ref('')
-const searchResults = ref([])
+const searchResults = ref<MusicKitAlbum[]>([])
 
 const renewToken = async () => {
   try {

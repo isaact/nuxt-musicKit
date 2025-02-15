@@ -74,6 +74,16 @@ interface MusicKitSetQueueOptions {
 }
 
 // Define a media item in the queue
+interface MusicKitAlbum extends MusicKitMediaItem {
+  attributes: {
+    name: string;
+    artistName: string;
+    artwork: MusicKitArtwork;
+    releaseDate: string;
+    songs?: MusicKitMediaItem[];
+  };
+}
+
 interface MusicKitMediaItem {
   id: string;
   type: string;
