@@ -18,7 +18,6 @@ enum PlaybackState {
 interface MusicKitInstance {
   developerToken: string;
   userToken: string | null;
-  // Define other properties here if needed
 
   // API object for making requests to Apple Music
   api: {
@@ -73,33 +72,23 @@ interface MusicKitSetQueueOptions {
   playlist?: string;
 }
 
-// Define a media item in the queue
-interface MusicKitAlbum extends MusicKitMediaItem {
-  attributes: {
-    name: string;
-    artistName: string;
-    artwork: MusicKitArtwork;
-    releaseDate: string;
-    songs?: MusicKitMediaItem[];
-  };
+// Artwork structure
+interface MusicKitArtwork {
+  url: string;
+  width: number;
+  height: number;
 }
 
+// Define a media item (song, album, playlist, etc.)
 interface MusicKitMediaItem {
   id: string;
-  type: string;
+  type: 'song' | 'album' | 'playlist' | 'artist'; // Type could be any of these
   attributes: {
     title: string;
     albumName: string;
     artistName: string;
     artwork: MusicKitArtwork;
   };
-}
-
-// Artwork structure
-interface MusicKitArtwork {
-  url: string;
-  width: number;
-  height: number;
 }
 
 // Define the queue
@@ -110,39 +99,43 @@ interface MusicKitQueue {
 
 // Song, Playlist, Album, and Artist Types
 
-interface MusicKitSong {
-  id: string;
-  title: string;
-  albumName: string;
-  artistName: string;
-  artwork: MusicKitArtwork;
-  duration: number; // Duration in seconds
-  url: string; // The URL of the song
+interface MusicKitSong extends MusicKitMediaItem {
+  attributes: {
+    title: string;
+    albumName: string;
+    artistName: string;
+    artwork: MusicKitArtwork;
+    duration: number; // Duration in seconds
+    url: string; // URL of the song
+  };
 }
 
-interface MusicKitPlaylist {
-  id: string;
-  name: string;
-  description: string;
-  artwork: MusicKitArtwork;
-  songs: MusicKitSong[];
+interface MusicKitPlaylist extends MusicKitMediaItem {
+  attributes: {
+    name: string;
+    description: string;
+    artwork: MusicKitArtwork;
+    songs: MusicKitSong[];
+  };
 }
 
-interface MusicKitAlbum {
-  id: string;
-  title: string;
-  artistName: string;
-  artwork: MusicKitArtwork;
-  releaseDate: string;
-  songs: MusicKitSong[];
+interface MusicKitAlbum extends MusicKitMediaItem {
+  attributes: {
+    title: string;
+    artistName: string;
+    artwork: MusicKitArtwork;
+    releaseDate: string;
+    songs: MusicKitSong[];
+  };
 }
 
-interface MusicKitArtist {
-  id: string;
-  name: string;
-  artwork: MusicKitArtwork;
-  albums: MusicKitAlbum[];
-  playlists: MusicKitPlaylist[];
+interface MusicKitArtist extends MusicKitMediaItem {
+  attributes: {
+    name: string;
+    artwork: MusicKitArtwork;
+    albums: MusicKitAlbum[];
+    playlists: MusicKitPlaylist[];
+  };
 }
 
 // Extend the window object to include MusicKit
