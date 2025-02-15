@@ -1,5 +1,6 @@
 import { defineNuxtModule, createResolver, addImports, addServerImports, addTypeTemplate } from '@nuxt/kit'
 import { defu } from 'defu'
+import type { MusicKitServerConfig } from './types/musicKit'
 
 export type ModuleOptions = MusicKitServerConfig
 

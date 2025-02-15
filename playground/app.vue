@@ -42,11 +42,11 @@
             <div class="album-info">
               <img
                 :src="album.attributes.artwork.url.replace('{w}x{h}', '100x100')"
-                :alt="album.attributes.name"
+                :alt="album.attributes.title"
                 class="album-art"
               >
               <div class="album-details">
-                <h3>{{ album.attributes.name }}</h3>
+                <h3>{{ album.attributes.title }}</h3>
                 <p>{{ album.attributes.artistName }}</p>
               </div>
             </div>
