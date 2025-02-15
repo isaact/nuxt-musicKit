@@ -96,3 +96,17 @@ declare global {
     };
   }
 }
+
+// Export all interfaces and types from this file
+export {
+  MusicKitApiResponse,
+  MusicKitInstance,
+  MusicKitServerConfig,
+  MusicKitConfig,
+  FetchMusicKitConfig,
+  MusicKitSetQueueOptions,
+  MusicKitMediaItem,
+  MusicKitArtwork,
+  MusicKitQueue,
+  PlaybackState
+};

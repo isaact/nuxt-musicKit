@@ -1,5 +1,5 @@
 import { ref, onMounted, computed } from '#imports'
-// import { isTokenExpired } from '../utils/musicKit'
+import type { MusicKitConfig, MusicKitInstance, FetchMusicKitConfig } from '~/src/types/musicKit'
 import { isTokenExpired } from '../server/utils/musicKit'
 
 // const devToken = ref('')

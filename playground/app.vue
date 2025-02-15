@@ -63,9 +63,9 @@
 
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
+import type { FetchMusicKitConfig } from '../src/types/musicKit'
 
-
-const fetchMusicKitConfig = async () => {
+const fetchMusicKitConfig:FetchMusicKitConfig = async () => {
   const config = await $fetch('/api/token')
   if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
     throw new Error('Invalid MusicKit configuration received from server')
