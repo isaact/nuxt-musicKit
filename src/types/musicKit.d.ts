@@ -2,7 +2,16 @@
 interface MusicKitApiResponse {
   data: object; // Adjust this type as per your needs or specific API response structures
   request: object;
-  response: Response
+  response: Response;
+}
+
+// Enum for Playback State
+enum PlaybackState {
+  Stopped = 0,
+  Playing = 1,
+  Paused = 2,
+  Buffering = 3,
+  Seeking = 4,
 }
 
 // Define the MusicKit instance interface
@@ -32,9 +41,10 @@ interface MusicKitInstance {
   unauthorize(): void;
 
   // Get playback state
-  playbackState: number; // This can be typed as an enum if needed
+  playbackState: PlaybackState;
 }
 
+// Define the MusicKit server config
 interface MusicKitServerConfig {
   appName: string;
   appBuild: string;
@@ -42,6 +52,7 @@ interface MusicKitServerConfig {
   teamID: string;
   keyID: string;
 }
+
 // Define the configuration for MusicKit
 interface MusicKitConfig {
   developerToken: string;
@@ -87,6 +98,43 @@ interface MusicKitQueue {
   currentItem: MusicKitMediaItem;
 }
 
+// Song, Playlist, Album, and Artist Types
+
+interface MusicKitSong {
+  id: string;
+  title: string;
+  albumName: string;
+  artistName: string;
+  artwork: MusicKitArtwork;
+  duration: number; // Duration in seconds
+  url: string; // The URL of the song
+}
+
+interface MusicKitPlaylist {
+  id: string;
+  name: string;
+  description: string;
+  artwork: MusicKitArtwork;
+  songs: MusicKitSong[];
+}
+
+interface MusicKitAlbum {
+  id: string;
+  title: string;
+  artistName: string;
+  artwork: MusicKitArtwork;
+  releaseDate: string;
+  songs: MusicKitSong[];
+}
+
+interface MusicKitArtist {
+  id: string;
+  name: string;
+  artwork: MusicKitArtwork;
+  albums: MusicKitAlbum[];
+  playlists: MusicKitPlaylist[];
+}
+
 // Extend the window object to include MusicKit
 declare global {
   interface Window {
@@ -108,5 +156,9 @@ export {
   MusicKitMediaItem,
   MusicKitArtwork,
   MusicKitQueue,
-  PlaybackState
+  MusicKitSong,
+  MusicKitPlaylist,
+  MusicKitAlbum,
+  MusicKitArtist,
+  PlaybackState,
 };
