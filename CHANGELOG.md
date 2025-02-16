@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.2.2
+
+[compare changes](https://github.com/isaact/nuxt-musicKit/compare/v1.2.1...v1.2.2)
+
+### 🏡 Chore
+
+- **release:** V1.2.1 ([c79e294](https://github.com/isaact/nuxt-musicKit/commit/c79e294))
+
+### ❤️ Contributors
+
+- Isaac Tewolde ([@isaact](http://github.com/isaact))
+
 ## v1.2.1
 
 [compare changes](https://github.com/isaact/nuxt-musicKit/compare/v1.0.11...v1.2.1)
