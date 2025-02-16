@@ -63,17 +63,9 @@
 
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
-import type { FetchMusicKitConfig, MusicKitAlbum } from '../src/types/musicKit'
+import type { MusicKitConfig, MusicKitAlbum } from '../src/types/musicKit'
 
-const fetchMusicKitConfig:FetchMusicKitConfig = async () => {
-  const config = await $fetch('/api/token')
-  if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
-    throw new Error('Invalid MusicKit configuration received from server')
-  }
-  return config
-}
-
-const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit(fetchMusicKitConfig)
+const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance, musicKitConfig } = useMusicKit()
 
 const loading = ref(true)
 const error = ref<string>('')
@@ -81,11 +73,11 @@ const searchQuery = ref('')
 const searchResults = ref<MusicKitAlbum[]>([])
 
 const renewToken = async () => {
-  try {
-    await getInstance()
-  } catch (err: unknown) {
-    error.value = err instanceof Error ? err.message : String(err)
+  const config = await $fetch('/api/token') as MusicKitConfig
+  if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
+    throw new Error('Invalid MusicKit configuration received from server')
   }
+  musicKitConfig.value = config
 }
 
 const searchAlbums = async () => {
@@ -123,6 +115,11 @@ watch(musicKitLoaded, async (loaded) => {
       error.value = err instanceof Error ? err.message : String(err)
       loading.value = false
     }
+  }
+})
+watch(tokenExpired, (isExpired) => {
+  if (isExpired) {
+    renewToken()
   }
 })
 </script>

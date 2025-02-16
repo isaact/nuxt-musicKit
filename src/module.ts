@@ -1,4 +1,4 @@
-import { defineNuxtModule, createResolver, addImports, addServerImports, addTypeTemplate } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addImports, addServerImports, addTypeTemplate, addPlugin } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { MusicKitServerConfig } from './types/musicKit'
 
@@ -30,6 +30,10 @@ export default defineNuxtModule({
 
     nuxt.options.runtimeConfig.musicKit = defu(nuxt.options.runtimeConfig.musicKit || {}, options)
 
+    addPlugin({
+      src: resolver.resolve('./runtime/plugins/musicKitConfig'),
+      mode: 'server'
+    })
     addImports({
       name: 'useMusicKit', // name of the composable to be used
       as: 'useMusicKit',

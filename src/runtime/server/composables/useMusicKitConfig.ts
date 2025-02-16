@@ -1,6 +1,6 @@
 import { generateDeveloperToken } from '../utils/musicKit'
 import { useRuntimeConfig } from "#imports";
-
+import type { MusicKitConfig, MusicKitServerConfig } from '~/src/types/musicKit'
 
 export async function generateMusicKitConfig(): Promise<MusicKitConfig> { // Returns Promise due to async token generation
     const config = useRuntimeConfig()
