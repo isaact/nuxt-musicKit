@@ -21,14 +21,14 @@ A Nuxt module for integrating Apple MusicKit JS into your Nuxt application.
 1. Install the module:
 
 ```bash
-npx nuxi module add nuxt-musicKit
+npx nuxi module add nuxt-musickit
 ```
 
 2. Configure your MusicKit credentials in `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['nuxt-musicKit'],
+  modules: ['nuxt-musickit'],
   
   musicKit: {
     developerKey: process.env.MUSIC_KIT_DEVELOPER_KEY,
