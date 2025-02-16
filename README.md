@@ -40,151 +40,20 @@ export default defineNuxtConfig({
 })
 ```
 
-3. Use the `useMusicKit` composable with proper initialization:
-
-```vue
-<script setup>
-const { getInstance, musicKitConnected, tokenExpired } = useMusicKit()
-
-async function playSong() {
-  const musicKit = await getInstance()
-  if (musicKit) {
-    await musicKit.setQueue({ song: '123456789' })
-    await musicKit.play()
-  }
-}
-</script>
-
-<template>
-  <button @click="playSong" :disabled="!musicKitConnected || tokenExpired">
-    Play Song
-  </button>
-</template>
-```
-
 **Available Composables:**
-- `getInstance(): Promise<MusicKitInstance>` - Initialize and get MusicKit instance
-- `musicKitConnected: Ref<boolean>` - Connection status
-- `tokenExpired: Ref<boolean>` - Dev token expiration state
-
-## Server-Side Token Management
-
-Create a server API route to handle token generation:
-
-```ts
-// server/api/token.ts
-import { defineEventHandler, createError } from 'h3'
-import { generateMusicKitConfig } from "#imports"
-
-export default defineEventHandler(async (_) => {
-  try {
-    // Get pre-validated config with fresh token
-    const musicKitConfig = await generateMusicKitConfig()
-    return musicKitConfig
-
-  } catch (error: unknown) {
-    // Type narrow the error before accessing properties
-    let message: string
-
-    if (error instanceof Error) {
-      // Handle the case where it's an Error object
-      message = error.message
-    } else {
-      // Handle the case where the error is something else
-      message = 'An unknown error occurred during token generation.'
-    }
-    
-    // Throw a new error with a meaningful message
-    throw createError({
-      statusCode: 500,
-      statusMessage: message
-    })
-  }
-})
-
-```
+- `useMusicKit():` - Client-side composable that creates and initializes a MusicKit Instance
+- `generateMusicKitConfig(): Server-side composable that creates a valid MusicKitConfig instance
 
 ## Client-Side Implementation
 
 Use the composable with your token endpoint:
 
 ```vue
-<template>
-  <div>
-    <h1>Nuxt MusicKit Playground</h1>
-    
-    <div v-if="loading">
-      Loading MusicKit...
-    </div>
-    
-    <div v-if="!loading && musicKitLoaded">
-      <div class="token-controls">
-        <button :disabled="!tokenExpired" @click="renewToken">
-          Renew Developer Token
-        </button>
-        <div :class="['token-status', { expired: tokenExpired }]">
-          Token Status: {{ tokenExpired ? 'Expired' : 'Valid' }}
-        </div>
-        <div :class="['connected-status', { connected: musicKitConnected }]">
-          MusicKit Status: {{ musicKitConnected ? 'Connected' : 'Not connected' }}
-        </div>
-      </div>
-      
-      <div class="search-container">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search albums..."
-          class="search-input"
-        >
-        <button :disabled="!searchQuery.length" @click="searchAlbums">
-          search
-        </button>
-      </div>
-
-      <div v-if="searchResults.length > 0" class="results-container">
-        <h2>Search Results</h2>
-        <ul class="album-list">
-          <li
-            v-for="album in searchResults"
-            :key="album.id"
-            class="album-item"
-          >
-            <div class="album-info">
-              <img
-                :src="album.attributes.artwork.url.replace('{w}x{h}', '100x100')"
-                :alt="album.attributes.title"
-                class="album-art"
-              >
-              <div class="album-details">
-                <h3>{{ album.attributes.title }}</h3>
-                <p>{{ album.attributes.artistName }}</p>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    
-    <div v-if="error">
-      Error: {{ error }}
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
-import type { FetchMusicKitConfig, MusicKitAlbum } from '../src/types/musicKit'
+import type { MusicKitConfig, MusicKitAlbum } from 'nuxt-musicKit'
 
-const fetchMusicKitConfig:FetchMusicKitConfig = async () => {
-  const config = await $fetch('/api/token')
-  if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
-    throw new Error('Invalid MusicKit configuration received from server')
-  }
-  return config
-}
-
-const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance } = useMusicKit(fetchMusicKitConfig)
+const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance, musicKitConfig } = useMusicKit()
 
 const loading = ref(true)
 const error = ref<string>('')
@@ -192,11 +61,11 @@ const searchQuery = ref('')
 const searchResults = ref<MusicKitAlbum[]>([])
 
 const renewToken = async () => {
-  try {
-    await getInstance()
-  } catch (err: unknown) {
-    error.value = err instanceof Error ? err.message : String(err)
+  const config = await $fetch('/api/token') as MusicKitConfig
+  if (!config?.developerToken || !config?.app?.name || !config?.app?.build) {
+    throw new Error('Invalid MusicKit configuration received from server')
   }
+  musicKitConfig.value = config
 }
 
 const searchAlbums = async () => {
@@ -236,25 +105,47 @@ watch(musicKitLoaded, async (loaded) => {
     }
   }
 })
+watch(tokenExpired, (isExpired) => {
+  if (isExpired) {
+    renewToken()
+  }
+})
 </script>
+```
+## Server-Side Token Management
 
-<style>
-.album-list {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0;
-  gap: 0.5rem;
-}
-.album-item {
-  width: 200px;
-  padding: 1rem;
-  list-style: none;
-  text-align: center;
-}
-.album-item img {
-  width: 100%;
-}
-</style>
+Create a server API route to handle developer token updates:
+
+```ts
+// server/api/token.ts
+import { defineEventHandler, createError } from 'h3'
+import { generateMusicKitConfig } from "#imports"
+
+export default defineEventHandler(async (_) => {
+  try {
+    // Get pre-validated config with fresh token
+    const musicKitConfig = await generateMusicKitConfig()
+    return musicKitConfig
+
+  } catch (error: unknown) {
+    // Type narrow the error before accessing properties
+    let message: string
+
+    if (error instanceof Error) {
+      // Handle the case where it's an Error object
+      message = error.message
+    } else {
+      // Handle the case where the error is something else
+      message = 'An unknown error occurred during token generation.'
+    }
+    
+    // Throw a new error with a meaningful message
+    throw createError({
+      statusCode: 500,
+      statusMessage: message
+    })
+  }
+})
 
 ```
 
