@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v1.2.1
+
+[compare changes](https://github.com/isaact/nuxt-musicKit/compare/v1.0.11...v1.2.1)
+
 ## v1.0.11
 
 [compare changes](https://github.com/isaact/nuxt-musicKit/compare/v1.0.10...v1.0.11)
