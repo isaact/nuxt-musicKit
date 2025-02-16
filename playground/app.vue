@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
-import type { MusicKitConfig, MusicKitAlbum } from '../src/types/musicKit'
+import type { MusicKitConfig, MusicKitAlbum } from '#imports'
 
 const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance, musicKitConfig } = useMusicKit()
 

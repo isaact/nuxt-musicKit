@@ -2,10 +2,10 @@ import { ref, onMounted, computed, useRuntimeConfig, watch } from '#imports'
 import type { MusicKitConfig, MusicKitInstance } from '~/src/types/musicKit'
 import { isTokenExpired } from '../server/utils/musicKit'
 
+
 const musicKitConnected = ref(false)
 const musicKitLoaded = ref(false)
 const initialized = ref(false)
-// const updateToken = ref<FetchMusicKitConfig | null>(null)
 const musicKitConfig = ref<MusicKitConfig | null>(null)
 
 const testConnection = async (musicKit: MusicKitInstance) =>  {
@@ -29,7 +29,7 @@ export function useMusicKit() {
   })
 
   const updateConfig = async () => {
-    if(musicKitConfig.value){
+    if(musicKitConfig.value && window.MusicKit){
       await window.MusicKit.configure(musicKitConfig.value)
       const musicKit = window.MusicKit?.getInstance()
       if(musicKit){
@@ -42,11 +42,10 @@ export function useMusicKit() {
     if(!initialized.value){
       initialized.value = true
       const config = useRuntimeConfig()
-      const newMusicKitConfig = config.public.musicKitConfig as MusicKitConfig
-      // if(window.MusicKit && !musicKitConnected.value){
-      //   updateConfig(newMusicKitConfig)
-      // }
-      musicKitConfig.value = newMusicKitConfig
+      musicKitConfig.value = config.public.musicKitConfig as MusicKitConfig
+      if(musicKitLoaded.value && !musicKitConnected.value){
+        await updateConfig()
+      }
     }
   }
 
@@ -66,7 +65,9 @@ export function useMusicKit() {
   onMounted(async () => {
     if (window.MusicKit) {
       musicKitLoaded.value = true
-      await initialize()
+      if(!initialized.value){
+        await initialize()
+      }
     }else{
       // Listen for musickitloaded event
       window.addEventListener('musickitloaded', async () => {
@@ -80,6 +81,10 @@ export function useMusicKit() {
       updateConfig()
     }
   })
+
+  if(!initialized.value){
+    initialize();
+  }
 
   return {
     musicKitLoaded,
