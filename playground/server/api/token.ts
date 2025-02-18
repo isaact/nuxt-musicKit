@@ -1,10 +1,11 @@
 import { defineEventHandler, createError } from 'h3'
-import { generateMusicKitConfig } from "#imports"
+import { generateMusicKitConfig, useRuntimeConfig } from "#imports"
 
 export default defineEventHandler(async (_) => {
   try {
     // Get pre-validated config with fresh token
-    const musicKitConfig = await generateMusicKitConfig()
+    const config = useRuntimeConfig()
+    const musicKitConfig = await generateMusicKitConfig(config.musicKit)
     return musicKitConfig
 
   } catch (error: unknown) {

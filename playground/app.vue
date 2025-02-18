@@ -63,8 +63,6 @@
 
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
-import type { MusicKitConfig, MusicKitAlbum } from '#imports'
-
 const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance, musicKitConfig } = useMusicKit()
 
 const loading = ref(true)
@@ -88,18 +86,20 @@ const searchAlbums = async () => {
     }
     
     const musicKit = await getInstance()
-    const storefrontId = musicKit.storefrontId
-    if (!storefrontId) {
-      throw new Error('No storefront ID available')
+    if(musicKit){
+      const storefrontId = musicKit.storefrontId
+      if (!storefrontId) {
+        throw new Error('No storefront ID available')
+      }
+      
+      const response = await musicKit.api.music(`/v1/catalog/${storefrontId}/search`, {
+        term: searchQuery.value,
+        types: ['albums'],
+        limit: 10
+      })
+      
+      searchResults.value = response.data.results.albums?.data || []
     }
-    
-    const response = await musicKit.api.music(`/v1/catalog/${storefrontId}/search`, {
-      term: searchQuery.value,
-      types: ['albums'],
-      limit: 10
-    })
-    
-    searchResults.value = response.data.results.albums?.data || []
   } catch (err: unknown) {
     console.error('Search Albums Error:', err)
     error.value = err instanceof Error ? err.message : String(err)
