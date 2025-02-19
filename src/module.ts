@@ -1,6 +1,7 @@
 import { defineNuxtModule, createResolver, addImports, addServerImports, addImportsDir } from '@nuxt/kit'
 import { defu } from 'defu'
 import { generateMusicKitConfig } from './runtime/server/composables/useMusicKitConfig'
+import type { MusicKitServerConfig } from './types'
 
 
 export type ModuleOptions = MusicKitServerConfig
