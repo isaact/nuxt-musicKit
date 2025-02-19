@@ -1,4 +1,5 @@
 import { ref, onMounted, computed, useRuntimeConfig, watch } from '#imports'
+import type { MusicKitConfig, MusicKitInstance } from '#imports'
 // import type { MusicKitInstance } from '~/src/types/musicKit'
 import { isTokenExpired } from '../server/utils/musicKit'
 
