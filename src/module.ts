@@ -1,10 +1,41 @@
 import { defineNuxtModule, createResolver, addImports, addServerImports, addImportsDir } from '@nuxt/kit'
 import { defu } from 'defu'
 import { generateMusicKitConfig } from './runtime/server/composables/useMusicKitConfig'
-import type { MusicKitServerConfig } from './types'
+import type {
+  MusicKitApiResponse,
+  MusicKitInstance,
+  MusicKitServerConfig,
+  MusicKitConfig,
+  FetchMusicKitConfig,
+  MusicKitSetQueueOptions,
+  MusicKitMediaItem,
+  MusicKitArtwork,
+  MusicKitQueue,
+  MusicKitSong,
+  MusicKitPlaylist,
+  MusicKitAlbum,
+  MusicKitArtist,
+  PlaybackState,
+} from './types'
 
 
 export type ModuleOptions = MusicKitServerConfig
+
+export type {
+  MusicKitApiResponse,
+  MusicKitInstance,
+  MusicKitServerConfig,
+  MusicKitConfig,
+  FetchMusicKitConfig,
+  MusicKitSetQueueOptions,
+  MusicKitMediaItem,
+  MusicKitArtwork,
+  MusicKitQueue,
+  MusicKitSong,
+  MusicKitPlaylist,
+  MusicKitAlbum,
+  MusicKitArtist,
+  PlaybackState }
 
 export default defineNuxtModule({
   meta: {

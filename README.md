@@ -51,6 +51,7 @@ Use the composable with your token endpoint:
 ```vue
 <script setup lang="ts">
 import { useMusicKit } from '#imports'
+import type { MusicKitConfig, MusicKitInstance } from 'nuxt-musickit';
 
 const { musicKitLoaded, musicKitConnected, tokenExpired, getInstance, musicKitConfig } = useMusicKit()
 

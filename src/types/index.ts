@@ -6,7 +6,7 @@ export interface MusicKitApiResponse {
 }
 
 // Enum for Playback State
-enum PlaybackState {
+export enum PlaybackState {
   Stopped = 0,
   Playing = 1,
   Paused = 2,
