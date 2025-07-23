@@ -1,4 +1,4 @@
-import { ref, onMounted, computed, useRuntimeConfig, watch } from '#imports'
+import { ref, computed, useRuntimeConfig, watch } from '#imports'
 import type { MusicKitConfig } from '#imports'
 // import type { MusicKitInstance } from '~/src/types/musicKit'
 import { isTokenExpired } from '../server/utils/musicKit'
@@ -26,6 +26,7 @@ const testConnection = async (musicKit: MusicKit.MusicKitInstance) =>  {
 
 
 export function useMusicKit() {
+  
   const tokenExpired = computed(() => {
     if(musicKitConfig.value){
       return isTokenExpired(musicKitConfig.value?.developerToken)
@@ -67,20 +68,19 @@ export function useMusicKit() {
     return undefined;
   };
 
-  onMounted(async () => {
+  if (typeof window !== 'undefined') {
     if (window.MusicKit) {
       musicKitLoaded.value = true
-      if(!initialized.value){
-        await initialize()
+      if (!initialized.value) {
+        initialize()
       }
-    }else{
-      // Listen for musickitloaded event
+    } else {
       window.addEventListener('musickitloaded', async () => {
         musicKitLoaded.value = true
-        await initialize();
+        await initialize()
       })
     }
-  })
+  }
   watch(musicKitConfig, async (newConfig) => {
     if (newConfig) {
       updateConfig()
