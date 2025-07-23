@@ -1,5 +1,5 @@
 import { ref, onMounted, computed, useRuntimeConfig, watch } from '#imports'
-import type { MusicKitConfig, MusicKitInstance } from '#imports'
+import type { MusicKitConfig, MusicKitInstance, MusicKitPlaylist } from '#imports'
 // import type { MusicKitInstance } from '~/src/types/musicKit'
 import { isTokenExpired } from '../server/utils/musicKit'
 
@@ -87,11 +87,30 @@ export function useMusicKit() {
     initialize();
   }
 
+  const fetchUserPlaylists = async (options?: { limit?: number; offset?: number }): Promise<MusicKitPlaylist[]> => {
+    const musicKit = await getInstance()
+    if (musicKit) {
+      const params = new URLSearchParams()
+      if (options?.limit) {
+        params.append('limit', String(options.limit))
+      }
+      if (options?.offset) {
+        params.append('offset', String(options.offset))
+      }
+      const queryString = params.toString()
+      const url = `/v1/me/library/playlists${queryString ? `?${queryString}` : ''}`
+      const { data } = await musicKit.api.music(url)
+      return data.data as MusicKitPlaylist[]
+    }
+    return []
+  }
+
   return {
     musicKitLoaded,
     musicKitConnected,
     musicKitConfig,
     getInstance,
-    tokenExpired
+    tokenExpired,
+    fetchUserPlaylists,
   }
 }

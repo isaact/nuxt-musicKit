@@ -1,6 +1,10 @@
 // Define the MusicKit API Response
+export interface MusicKitApiResource<T> {
+  data: T[];
+}
+
 export interface MusicKitApiResponse {
-  data: object; // Adjust this type as per your needs or specific API response structures
+  data: MusicKitApiResource<MusicKitMediaItem>;
   request: object;
   response: Response;
 }
@@ -113,9 +117,11 @@ export interface MusicKitSong extends MusicKitMediaItem {
 export interface MusicKitPlaylist extends MusicKitMediaItem {
   attributes: {
     name: string;
-    description: string;
+    description?: {
+      standard: string;
+    };
     artwork: MusicKitArtwork;
-    songs: MusicKitSong[];
+    songs?: MusicKitSong[];
   };
 }
 
