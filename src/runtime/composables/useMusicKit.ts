@@ -1,5 +1,5 @@
 import { ref, onMounted, computed, useRuntimeConfig, watch } from '#imports'
-import type { MusicKitConfig, MusicKitInstance, MusicKitPlaylist } from '#imports'
+import type { MusicKitConfig } from '#imports'
 // import type { MusicKitInstance } from '~/src/types/musicKit'
 import { isTokenExpired } from '../server/utils/musicKit'
 
@@ -9,15 +9,19 @@ const musicKitLoaded = ref(false)
 const initialized = ref(false)
 const musicKitConfig = ref<MusicKitConfig | null>(null)
 
-const testConnection = async (musicKit: MusicKitInstance) =>  {
-  if(musicKit){
-    const { response } = await musicKit.api.music('/v1/test')
-    if(response.ok){
-      musicKitConnected.value = true
-      return true
+const testConnection = async (musicKit: MusicKit.MusicKitInstance) =>  {
+  if (musicKit) {
+    try {
+      await musicKit.api.music('/v1/test');
+      musicKitConnected.value = true;
+      return true;
+    } catch (e) {
+      console.error('MusicKit connection test failed:', e);
+      musicKitConnected.value = false;
+      // return false;
     }
   }
-  return false
+  return false;
 }
 
 
@@ -50,7 +54,7 @@ export function useMusicKit() {
     }
   }
 
-  const getInstance = async (): Promise<MusicKitInstance | undefined> => {
+  const getInstance = async (): Promise<MusicKit.MusicKitInstance | undefined> => {
     if (window.MusicKit && musicKitLoaded.value) {  
       if(tokenExpired.value){
         await initialize();
@@ -87,7 +91,7 @@ export function useMusicKit() {
     initialize();
   }
 
-  const fetchUserPlaylists = async (options?: { limit?: number; offset?: number }): Promise<MusicKitPlaylist[]> => {
+  const fetchUserPlaylists = async (options?: { limit?: number; offset?: number }): Promise<MusicKit.Playlists[]> => {
     const musicKit = await getInstance()
     if (musicKit) {
       const params = new URLSearchParams()
@@ -99,8 +103,8 @@ export function useMusicKit() {
       }
       const queryString = params.toString()
       const url = `/v1/me/library/playlists${queryString ? `?${queryString}` : ''}`
-      const { data } = await musicKit.api.music(url)
-      return data.data as MusicKitPlaylist[]
+      const response = await musicKit.api.music(url) as { data: MusicKit.Playlists[] };
+      return response.data;
     }
     return []
   }
